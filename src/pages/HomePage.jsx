@@ -1,5 +1,8 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Header from "../components/Header";
+import ThemeToggle from "../components/ThemeToggle";
+import BackToTop from "../components/BackToTop";
 import "./HomePage.css";
 
 export default function HomePage() {
@@ -55,8 +58,8 @@ export default function HomePage() {
     {
       id: 1,
       title: "科技巨头AI竞赛白热化，行业格局面临重大变革",
-      content: "OpenAI、Google、微软等科技巨头在人工智能领域展开激烈竞争，新产品发布频繁，投资规模不断扩大。",
-      summary: "OpenAI、Google、微软等科技巨头在人工智能领域展开激烈竞争，新产品发布频繁，投资规模不断扩大。",
+      content: "OpenAI、Google、微软等科技巨头在人工智能领域展开激烈竞争，新产品发布频繁，投资规模扩大。",
+      summary: "OpenAI、Google、微软等科技巨头在人工智能领域展开激烈竞争，新产品发布频繁，投资规模扩大。",
       source: "科技日报",
       category: "科技",
       published_at: "2024-01-15 10:30",
@@ -74,7 +77,7 @@ export default function HomePage() {
       published_at: "2024-01-14 16:45",
       created_by: 1,
       is_active: true,
-      belonged_event: "气候变化会议",
+      belonged_event: "气候变会议",
     },
     {
       id: 3,
@@ -93,7 +96,7 @@ export default function HomePage() {
   // 所属事件配置
   const eventConfig = {
     "AI技术发展": { label: "AI技术发展", bgColor: "rgba(59, 130, 246, 0.9)" },
-    "气候变化会议": { label: "气候变化会议", bgColor: "rgba(16, 185, 129, 0.9)" },
+    "气候变会议": { label: "气候变会议", bgColor: "rgba(16, 185, 129, 0.9)" },
     "新能源汽车发展": { label: "新能源汽车发展", bgColor: "rgba(245, 158, 11, 0.9)" },
   };
 
@@ -103,10 +106,7 @@ export default function HomePage() {
     ended: { label: "已结束", color: "#6b7280", bgColor: "rgba(107, 114, 128, 0.1)" },
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    window.location.href = "/login";
-  };
+
 
   const handlePrevNews = () => {
     setCurrentNewsIndex((prev) => 
@@ -124,33 +124,7 @@ export default function HomePage() {
 
   return (
     <div className="homepage-container">
-      {/* Header */}
-      <header className="homepage-header">
-        <div className="header-content">
-          <div className="header-left">
-            <div className="logo-container">
-              <div className="logo-icon">E</div>
-              <span className="logo-text">EasyPeek</span>
-            </div>
-          </div>
-
-          <nav className="header-nav">
-            <span className="nav-item active">首页</span>
-            <Link to="/news" className="nav-item">热点事件</Link>
-            <Link to="/timeline" className="nav-item">全球新闻</Link>
-            <Link to="/search" className="nav-item">推荐</Link>
-          </nav>
-
-          <div className="header-right">
-            <Link to="/profile">
-              <button className="profile-btn">个人中心</button>
-            </Link>
-            <button onClick={handleLogout} className="logout-btn">
-              退出登录
-            </button>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <div className="homepage-content">
         {/* Hero Section */}
@@ -331,6 +305,10 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      
+      {/* 浮动按钮组 */}
+      <ThemeToggle className="fixed" />
+      <BackToTop />
     </div>
   );
 }

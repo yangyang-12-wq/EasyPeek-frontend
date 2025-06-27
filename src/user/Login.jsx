@@ -1,3 +1,4 @@
+/* Login.js */
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, Row, Col, message, Space } from 'antd';
 import { UserOutlined, LockOutlined, EyeOutlined } from '@ant-design/icons';
@@ -15,26 +16,40 @@ const Login = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/login', {
+      const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
         username: values.username,
         password: values.password,
       });
       
-      if (response.data.success) {
+      if (response.data.code==200) {
+        // 1. 保存认证信息
         localStorage.setItem('token', response.data.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.data.user));
-        message.success('登录成功！');
-        navigate('/dashboard');
+        localStorage.setItem('isLoggedIn', 'true');
+        
+        // 2. 显示成功消息
+        message.success('欢迎回来！登录成功');
+
+        // 3. 直接使用 navigate 进行跳转，不再使用 setTimeout 和 try/catch
+        navigate('/HomePage');
+        
       } else {
-        message.error(response.data.message || '登录失败');
+        message.error(response.data.message || '登录失败，请检查用户名或密码');
       }
     } catch (error) {
       console.error('Login error:', error);
-      message.error('登录失败，请检查网络连接');
+      if (error.response) {
+        // 如果后端返回了具体的错误信息
+        message.error(error.response.data.message || '登录失败，服务器错误');
+      } else {
+        // 网络错误等
+        message.error('登录失败，请检查网络连接');
+      }
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className={`login-container ${theme}`}>
@@ -44,7 +59,7 @@ const Login = () => {
       </div>
       
       <div className="login-theme-toggle">
-        <ThemeToggle />
+        <ThemeToggle className="fixed" />
       </div>
       
       <div className="login-content">

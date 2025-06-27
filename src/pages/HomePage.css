@@ -1,11 +1,28 @@
-/* 主页容器 */
 .homepage-container {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
   position: relative;
   overflow-x: hidden;
+  box-sizing: border-box;
 }
 
+/* 暗色主题样式 */
+body.dark .homepage-container {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+body.dark .homepage-container::before {
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.05), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.03), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.06), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.04), transparent);
+}
 /* 动态背景效果 */
 .homepage-container::before {
   content: '';
@@ -36,14 +53,21 @@
   z-index: 100;
 }
 
+body.dark .homepage-header {
+  background: rgba(30, 30, 46, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
 .header-content {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   padding: 0 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 70px;
+  box-sizing: border-box;
 }
 
 /* Logo样式 */
@@ -75,6 +99,10 @@
   letter-spacing: -0.02em;
 }
 
+body.dark .logo-text {
+  color: #f9fafb;
+}
+
 /* 导航样式 */
 .header-nav {
   display: flex;
@@ -91,6 +119,19 @@
   padding: 8px 16px;
   border-radius: 12px;
   position: relative;
+}
+
+body.dark .nav-item {
+  color: #d1d5db;
+}
+
+body.dark .nav-item:hover {
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
+}
+
+body.dark .nav-item.active {
+  color: #8b5cf6;
 }
 
 .nav-item:hover {
@@ -143,14 +184,15 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
 }
-
 /* 主要内容区域 */
 .homepage-content {
-  max-width: 1400px;
-  margin: 0 auto;
+  flex-grow: 1;
+  width: 100%;
+  margin: 0;
   padding: 40px 24px;
   position: relative;
   z-index: 10;
+  box-sizing: border-box;
 }
 
 /* Hero区域 */
@@ -178,10 +220,22 @@
 
 /* 搜索区域 */
 .search-container {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 1000px;
+  margin-left: 10%;    /* 默认左侧边距为屏幕宽度的10% */
+  margin-right: auto;
 }
 
+@media (min-width: 1200px) {
+  .search-container {
+    margin-left: 400px;  /* 大屏幕时固定为200px */
+  }
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    margin-left: 5%;    /* 小屏幕时减少边距 */
+  }
+}
 .search-wrapper {
   display: flex;
   gap: 16px;
@@ -205,6 +259,20 @@
   transition: all 0.3s ease;
 }
 
+body.dark .search-input {
+  background: rgba(45, 45, 65, 0.95);
+  color: #f9fafb;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+body.dark .search-input::placeholder {
+  color: #9ca3af;
+}
+
+body.dark .search-input:focus {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 0 4px rgba(139, 92, 246, 0.1);
+}
+
 .search-input:focus {
   outline: none;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2), 0 0 0 4px rgba(79, 70, 229, 0.1);
@@ -219,6 +287,10 @@
   width: 20px;
   height: 20px;
   color: #6b7280;
+}
+
+body.dark .search-icon {
+  color: #9ca3af;
 }
 
 .search-btn {
@@ -285,6 +357,10 @@
   margin: 0 0 16px 0;
 }
 
+body.dark .card-title {
+  color: #f9fafb;
+}
+
 /* 统计列表 */
 .stats-list {
   display: flex;
@@ -300,6 +376,10 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+body.dark .stat-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .stat-item:last-child {
   border-bottom: none;
 }
@@ -307,6 +387,10 @@
 .stat-label {
   color: #6b7280;
   font-weight: 500;
+}
+
+body.dark .stat-label {
+  color: #9ca3af;
 }
 
 .stat-value {
@@ -339,6 +423,10 @@
   background: rgba(79, 70, 229, 0.1);
 }
 
+body.dark .category-item:hover {
+  background: rgba(139, 92, 246, 0.1);
+}
+
 .category-info {
   display: flex;
   align-items: center;
@@ -362,6 +450,10 @@
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+body.dark .category-name {
+  color: #d1d5db;
 }
 
 .category-count {
@@ -431,10 +523,20 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+body.dark .news-item {
+  background: rgba(45, 45, 65, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
 .news-item:hover {
   transform: translateY(-4px);
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+body.dark .news-item:hover {
+  background: rgba(55, 55, 75, 0.9);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
 .news-header {
@@ -476,6 +578,10 @@
   overflow: hidden;
 }
 
+body.dark .news-title {
+  color: #f9fafb;
+}
+
 .news-summary {
   color: #6b7280;
   font-size: 14px;
@@ -485,6 +591,10 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+body.dark .news-summary {
+  color: #9ca3af;
 }
 
 .news-meta {
@@ -499,9 +609,17 @@
   color: #6b7280;
 }
 
+body.dark .news-time {
+  color: #9ca3af;
+}
+
 .news-source {
   color: #4f46e5;
   font-weight: 500;
+}
+
+body.dark .news-source {
+  color: #8b5cf6;
 }
 
 /* 活动列表 */
@@ -520,9 +638,17 @@
   transition: all 0.3s ease;
 }
 
+body.dark .activity-item {
+  background: rgba(45, 45, 65, 0.6);
+}
+
 .activity-item:hover {
   background: rgba(79, 70, 229, 0.05);
   transform: translateX(4px);
+}
+
+body.dark .activity-item:hover {
+  background: rgba(55, 55, 75, 0.8);
 }
 
 .activity-dot {
@@ -550,6 +676,10 @@
   color: #1f2937;
 }
 
+body.dark .activity-title {
+  color: #f9fafb;
+}
+
 .activity-type {
   background: rgba(59, 130, 246, 0.1);
   color: #1e40af;
@@ -566,9 +696,17 @@
   line-height: 1.5;
 }
 
+body.dark .activity-description {
+  color: #9ca3af;
+}
+
 .activity-time {
   color: #9ca3af;
   font-size: 12px;
+}
+
+body.dark .activity-time {
+  color: #6b7280;
 }
 
 /* 按钮样式 */
@@ -616,6 +754,30 @@
   }
   to {
     transform: translateY(-100px);
+  }
+}
+
+/* 浮动按钮布局优化 */
+.homepage-container .theme-toggle.fixed {
+  top: 80px;
+  right: 20px;
+}
+
+.homepage-container .back-to-top {
+  bottom: 20px;
+  right: 20px;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .homepage-container .theme-toggle.fixed {
+    top: 72px;
+    right: 16px;
+  }
+  
+  .homepage-container .back-to-top {
+    bottom: 16px;
+    right: 16px;
   }
 }
 
