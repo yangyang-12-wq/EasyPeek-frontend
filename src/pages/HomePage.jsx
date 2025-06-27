@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import ThemeToggle from "../components/ThemeToggle";
-import BackToTop from "../components/BackToTop";
 import "./HomePage.css";
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
+  const navigate = useNavigate();
 
   const events = [
     { 
@@ -106,8 +106,6 @@ export default function HomePage() {
     ended: { label: "已结束", color: "#6b7280", bgColor: "rgba(107, 114, 128, 0.1)" },
   };
 
-
-
   const handlePrevNews = () => {
     setCurrentNewsIndex((prev) => 
       prev === 0 ? featuredNews.length - 1 : prev - 1
@@ -118,6 +116,11 @@ export default function HomePage() {
     setCurrentNewsIndex((prev) => 
       prev === featuredNews.length - 1 ? 0 : prev + 1
     );
+  };
+
+  // 处理新闻点击事件
+  const handleNewsClick = (newsId) => {
+    navigate(`/newspage/${newsId}`);
   };
 
   const currentNews = featuredNews[currentNewsIndex];
@@ -163,7 +166,7 @@ export default function HomePage() {
             {/* 单独新闻展示 */}
             <div className="sidebar-card">
               <h3 className="card-title">今日焦点</h3>
-              <div className="single-news-container">
+              <div className="single-news-container" onClick={() => handleNewsClick(currentNews.id)}>
                 <h4 className="single-news-title">{currentNews.title}</h4>
                 <p className="single-news-summary">{currentNews.summary}</p>
                 <div className="single-news-meta">
@@ -172,7 +175,10 @@ export default function HomePage() {
                 </div>
                 {/* 转换箭头 */}
                 <div className="news-navigation">
-                  <button className="nav-arrow prev-arrow" onClick={handlePrevNews}>
+                  <button className="nav-arrow prev-arrow" onClick={(e) => {
+                    e.stopPropagation();
+                    handlePrevNews();
+                  }}>
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
@@ -180,7 +186,10 @@ export default function HomePage() {
                   <div className="news-indicator">
                     {currentNewsIndex + 1} / {featuredNews.length}
                   </div>
-                  <button className="nav-arrow next-arrow" onClick={handleNextNews}>
+                  <button className="nav-arrow next-arrow" onClick={(e) => {
+                    e.stopPropagation();
+                    handleNextNews();
+                  }}>
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
@@ -228,7 +237,7 @@ export default function HomePage() {
               <div className="card-body">
                 <div className="news-grid">
                   {featuredNews.map((news) => (
-                    <div key={news.id} className="news-item">
+                    <div key={news.id} className="news-item" onClick={() => handleNewsClick(news.id)}>
                       <div className="news-header">
                         {/* 新闻分类标签 - 左上角 */}
                         <div className="news-category-badge">
@@ -270,7 +279,7 @@ export default function HomePage() {
               <div className="card-body">
                 <div className="news-grid">
                   {featuredNews.map((news) => (
-                    <div key={news.id} className="news-item">
+                    <div key={news.id} className="news-item" onClick={() => handleNewsClick(news.id)}>
                       <div className="news-header">
                         {/* 新闻分类标签 - 左上角 */}
                         <div className="news-category-badge">
@@ -308,7 +317,6 @@ export default function HomePage() {
       
       {/* 浮动按钮组 */}
       <ThemeToggle className="fixed" />
-      <BackToTop />
     </div>
   );
 }

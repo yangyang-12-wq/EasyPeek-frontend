@@ -42,7 +42,7 @@ body.light {
 /* 黑夜模式 */
 body.dark {
   background-color: #1a1a1a;
-  color: #ffffff;
+  color: #e5e7eb;
 }
 
 /* 链接样式 */
@@ -107,17 +107,17 @@ button {
 /* 黑夜模式下的Ant Design组件 */
 body.dark .ant-card {
   background: rgba(45, 45, 65, 0.9) !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(75, 85, 99, 0.3) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
 }
 
 body.dark .ant-card .ant-card-head {
   background: rgba(45, 45, 65, 0.9) !important;
-  border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+  border-bottom-color: rgba(75, 85, 99, 0.3) !important;
 }
 
 body.dark .ant-card .ant-card-head-title {
-  color: #ffffff !important;
+  color: #e5e7eb !important;
 }
 
 body.dark .ant-card .ant-card-body {
@@ -126,13 +126,13 @@ body.dark .ant-card .ant-card-body {
 }
 
 body.dark .ant-input {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  color: #ffffff !important;
+  background-color: rgba(75, 85, 99, 0.2) !important;
+  border-color: rgba(75, 85, 99, 0.4) !important;
+  color: #e5e7eb !important;
 }
 
 body.dark .ant-input::placeholder {
-  color: rgba(255, 255, 255, 0.5) !important;
+  color: rgba(156, 163, 175, 0.8) !important;
 }
 
 body.dark .ant-input:focus {
@@ -145,17 +145,17 @@ body.dark .ant-menu {
 }
 
 body.dark .ant-menu-item {
-  color: rgba(255, 255, 255, 0.85) !important;
+  color: rgba(229, 231, 235, 0.85) !important;
 }
 
 body.dark .ant-menu-item:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  color: #ffffff !important;
+  background-color: rgba(75, 85, 99, 0.2) !important;
+  color: #e5e7eb !important;
 }
 
 body.dark .ant-menu-item-selected {
   background-color: #1890ff !important;
-  color: #ffffff !important;
+  color: #e5e7eb !important;
 }
 
 body.dark .ant-list-item {
@@ -163,15 +163,15 @@ body.dark .ant-list-item {
 }
 
 body.dark .ant-list-item-meta-title a {
-  color: #ffffff !important;
+  color: #e5e7eb !important;
 }
 
 body.dark .ant-list-item-meta-description {
-  color: rgba(255, 255, 255, 0.65) !important;
+  color: rgba(156, 163, 175, 0.9) !important;
 }
 
 body.dark .ant-statistic-title {
-  color: rgba(255, 255, 255, 0.85) !important;
+  color: rgba(229, 231, 235, 0.85) !important;
 }
 
 /* 按钮样式 */

@@ -18,7 +18,7 @@ const Header = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setIsLoggedIn(false);
-    window.location.href = '/login';
+    window.location.href = '/HomePage';
   };
 
   const handleLogin = () => {
