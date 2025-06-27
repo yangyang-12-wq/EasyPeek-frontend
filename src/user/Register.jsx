@@ -25,10 +25,10 @@ const Register = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/register', {
-        username: values.username,
-        email: values.email,
-        password: values.password,
+      const response = await axios.post('http://localhost:8080/api/v1/auth/register', {
+        Username: values.username,
+        Email: values.email,
+        Password: values.password,
       });
 
       if (response.data.success) {
@@ -66,7 +66,7 @@ const Register = () => {
       </div>
       
       <div className="register-theme-toggle">
-        <ThemeToggle />
+        <ThemeToggle className="fixed" />
       </div>
       
       <div className="register-content">
