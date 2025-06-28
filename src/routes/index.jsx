@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Login from '../user/Login';
@@ -12,9 +13,11 @@ const ProtectedRoute = ({ children }) => {
   return isLoggedIn ? children : <Navigate to="/login" replace />;
 };
 
+
 const router = createBrowserRouter([
   {
     path: '/',
+
     element: <Navigate to="/HomePage" replace />
   },
   {
@@ -52,3 +55,4 @@ const router = createBrowserRouter([
 ]);
 
 export default router;
+
