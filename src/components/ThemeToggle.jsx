@@ -6,27 +6,44 @@ import './ThemeToggle.css';
 
 const ThemeToggle = ({ className = '', style = {} }) => {
   const { theme, toggleTheme } = useTheme();
-  const [isVisible, setIsVisible] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
+  // 自动隐藏逻辑
   useEffect(() => {
-    const handleScroll = () => {
-      // 只在页面顶部200px范围内显示
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      setIsVisible(scrollTop < 200);
+    let timer;
+    if (isExpanded) {
+      timer = setTimeout(() => {
+        setIsExpanded(false);
+      }, 3000); // 3秒后自动隐藏
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
     };
+  }, [isExpanded]);
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const handleClick = () => {
+    if (!isExpanded) {
+      setIsExpanded(true);
+    } else {
+      toggleTheme();
+      // 切换主题后立即隐藏
+      setIsExpanded(false);
+    }
+  };
 
-  if (!isVisible) return null;
+  const handleMouseEnter = () => {
+    if (!isExpanded) {
+      setIsExpanded(true);
+    }
+  };
 
   return (
     <Button
       type="text"
       icon={theme === 'light' ? <SunOutlined /> : <MoonOutlined />}
-      onClick={toggleTheme}
-      className={`theme-toggle ${theme} ${className}`}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      className={`theme-toggle ${theme} ${className} ${isExpanded ? 'expanded' : 'collapsed'}`}
       style={style}
       title={theme === 'light' ? '切换到黑夜模式' : '切换到白天模式'}
     />
