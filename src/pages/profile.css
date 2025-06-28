@@ -451,6 +451,20 @@ body.dark .message-header h4 {
   color: #f9fafb;
 }
 
+.message-title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.message-title-link:hover {
+  text-decoration: none;
+  color: #4f46e5;
+}
+
+body.dark .message-title-link:hover {
+  color: #8b5cf6;
+}
+
 .unread-badge {
   background: #ef4444;
   color: white;
@@ -554,6 +568,18 @@ body.dark .following-item {
 
 .following-content {
   flex: 1;
+}
+
+.following-content-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex: 1;
+}
+
+.following-content-link:hover {
+  text-decoration: none;
+  color: inherit;
 }
 
 .following-badges {

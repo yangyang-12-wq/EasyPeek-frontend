@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams, Link } from "react-router-dom";
 import Header from '../components/Header';
 import ThemeToggle from '../components/ThemeToggle';
 import './profile.css';
@@ -178,7 +179,13 @@ const ProfilePage = () => {
                         >
                           <div className="message-content">
                             <div className="message-header">
-                              <h4>{message.title}</h4>
+                              {message.id === 1 || message.id === 3 ? (
+                                <Link to={`/newspage/${message.id}`} className="message-title-link">
+                                  <h4>{message.title}</h4>
+                                </Link>
+                              ) : (
+                                <h4>{message.title}</h4>
+                              )}
                               {!message.read && <span className="unread-badge">新</span>}
                             </div>
                             <p>{message.content}</p>
@@ -204,18 +211,22 @@ const ProfilePage = () => {
                     <div className="following-list">
                       {followedNews.map((news) => (
                         <div key={news.id} className="following-item">
-                          <div className="following-content">
-                            <div className="following-badges">
-                              <span className="category-badge">{news.category}</span>
-                              <span className={`status-badge ${news.status === '进行中' ? 'active' : 'completed'}`}>
-                                {news.status}
-                              </span>
+                          <Link to={`/newspage/${news.id}`} className="following-content-link">
+                            <div className="following-content">
+                              <div className="following-badges">
+                                <span className="category-badge">{news.category}</span>
+                                <span className={`status-badge ${news.status === '进行中' ? 'active' : 'completed'}`}>
+                                  {news.status}
+                                </span>
+                              </div>
+                              <h4>{news.title}</h4>
+                              <span className="last-update">最后更新：{news.lastUpdate}</span>
                             </div>
-                            <h4>{news.title}</h4>
-                            <span className="last-update">最后更新：{news.lastUpdate}</span>
-                          </div>
+                          </Link>
                           <div className="following-actions">
-                            <button className="view-btn">查看</button>
+                            <Link to={`/newspage/${news.id}`}>
+                              <button className="view-btn">查看</button>
+                            </Link>
                             <button className="bookmark-btn">🔖</button>
                           </div>
                         </div>
