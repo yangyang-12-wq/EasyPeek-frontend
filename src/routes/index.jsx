@@ -5,6 +5,7 @@ import Register from '../user/Register';
 
 import HomePage from '../pages/HomePage';
 import NewsPage from '../pages/newspage';
+import ProfilePage from '../pages/profile';
 
 // const ProtectedRoute = ({ children }) => {
 //   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; // 修复：正确获取登录状态
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: '/newspage/:id',
     element: <NewsPage />
+  },
+  {
+    path: '/profile',
+    element: <ProfilePage />
   }
   // {
   //   path: '/HomePage',
