@@ -121,7 +121,7 @@ export default function NewsPage() {
         const data = { ...mockNewsData, id: parseInt(id) };
         setNewsData(data);
         setError(null);
-      } catch (err) {
+      } catch (error) {
         setError("获取新闻详情失败，请稍后重试");
       } finally {
         setLoading(false);
@@ -130,12 +130,6 @@ export default function NewsPage() {
 
     fetchNewsData();
   }, [id]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    window.location.href = "/login";
-  };
-
   // 加载状态
   if (loading) {
     return (
@@ -378,4 +372,4 @@ export default function NewsPage() {
       <ThemeToggle className="fixed" />
     </div>
   );
-} 
+}

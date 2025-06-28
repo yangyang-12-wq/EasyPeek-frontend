@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Login from '../user/Login';
@@ -5,16 +6,18 @@ import Register from '../user/Register';
 
 import HomePage from '../pages/HomePage';
 import NewsPage from '../pages/newspage';
-import ProfilePage from '../pages/profile';
+import ProfilePage from '../user/profile';
 
-// const ProtectedRoute = ({ children }) => {
-//   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; // 修复：正确获取登录状态
-//   return isLoggedIn ? children : <Navigate to="/login" replace />;
-// };
+const ProtectedRoute = ({ children }) => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; // 修复：正确获取登录状态
+  return isLoggedIn ? children : <Navigate to="/login" replace />;
+};
+
 
 const router = createBrowserRouter([
   {
     path: '/',
+
     element: <Navigate to="/HomePage" replace />
   },
   {
@@ -35,7 +38,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/profile',
-    element: <ProfilePage />
+    element:(
+      <ProtectedRoute> 
+        <ProfilePage /> 
+      </ProtectedRoute>
+    )
   }
   // {
   //   path: '/HomePage',
@@ -48,3 +55,4 @@ const router = createBrowserRouter([
 ]);
 
 export default router;
+
