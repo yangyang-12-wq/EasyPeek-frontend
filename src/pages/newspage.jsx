@@ -129,7 +129,7 @@ export default function NewsPage() {
     };
 
     fetchNewsData();
-  }, [id, mockNewsData]);
+  }, [id]);
   // 加载状态
   if (loading) {
     return (
