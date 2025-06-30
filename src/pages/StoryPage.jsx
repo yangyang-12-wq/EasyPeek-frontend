@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import ThemeToggle from '../components/ThemeToggle';
-import { getStatusColor, getStatusText, getImportanceColor, getImportanceText } from '../utils/statusConfig';
+import { getStatusColor, getStatusText, getImportanceColor } from '../utils/statusConfig';
 import './StoryPage.css';
 
 export default function StoryPage() {

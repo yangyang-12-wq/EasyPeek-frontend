@@ -121,7 +121,7 @@ export default function NewsPage() {
         const data = { ...mockNewsData, id: parseInt(id) };
         setNewsData(data);
         setError(null);
-      } catch (error) {
+      } catch {
         setError("获取新闻详情失败，请稍后重试");
       } finally {
         setLoading(false);
@@ -129,7 +129,7 @@ export default function NewsPage() {
     };
 
     fetchNewsData();
-  }, [id]);
+  }, [id, mockNewsData]);
   // 加载状态
   if (loading) {
     return (
