@@ -6,6 +6,8 @@ import Register from '../user/Register';
 
 import HomePage from '../pages/HomePage';
 import NewsPage from '../pages/newspage';
+import StoryPage from '../pages/StoryPage';
+import StoryDetailPage from '../pages/StoryDetailPage';
 import ProfilePage from '../user/profile';
 
 const ProtectedRoute = ({ children }) => {
@@ -35,6 +37,14 @@ const router = createBrowserRouter([
   {
     path: '/newspage/:id',
     element: <NewsPage />
+  },
+  {
+    path: '/stories',
+    element: <StoryPage />
+  },
+  {
+    path: '/story/:id',
+    element: <StoryDetailPage />
   },
   {
     path: '/profile',

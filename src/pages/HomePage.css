@@ -78,7 +78,7 @@ body.dark .homepage-container::before {
 /* 搜索区域 */
 .search-container {
   max-width: 1000px;
-  margin-left: 10%;    /* 默认左侧边距为屏幕宽度的10% */
+  margin-left: 400;    /* 默认左侧边距为屏幕宽度的10% */
   margin-right: auto;
 }
 
@@ -642,24 +642,15 @@ body.dark .activity-time {
 /* 浮动按钮布局优化 */
 .homepage-container .theme-toggle.fixed {
   top: 80px;
-  right: 20px;
+  /* 移除right定位，使用ThemeToggle组件的默认collapsed/expanded状态 */
 }
 
-.homepage-container .back-to-top {
-  bottom: 20px;
-  right: 20px;
-}
 
 /* 响应式布局 */
 @media (max-width: 768px) {
   .homepage-container .theme-toggle.fixed {
     top: 72px;
-    right: 16px;
-  }
-  
-  .homepage-container .back-to-top {
-    bottom: 16px;
-    right: 16px;
+    /* 移除right定位，使用ThemeToggle组件的默认collapsed/expanded状态 */
   }
 }
 
