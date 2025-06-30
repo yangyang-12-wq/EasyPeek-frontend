@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from "react-router-dom";
 import Header from "../components/Header";
 import ThemeToggle from "../components/ThemeToggle";
@@ -121,7 +121,7 @@ export default function NewsPage() {
         const data = { ...mockNewsData, id: parseInt(id) };
         setNewsData(data);
         setError(null);
-      } catch (error) {
+      } catch {
         setError("获取新闻详情失败，请稍后重试");
       } finally {
         setLoading(false);
