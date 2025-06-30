@@ -50,14 +50,6 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     )
   }
-  // {
-  //   path: '/HomePage',
-  //   element: (
-  //     <ProtectedRoute>
-  //       <HomePage />
-  //     </ProtectedRoute>
-  //   )
-  // }
 ]);
 
 export default router;
