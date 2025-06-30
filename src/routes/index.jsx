@@ -10,6 +10,7 @@ import NewsPage from '../pages/newspage';
 import StoryPage from '../pages/StoryPage';
 import StoryDetailPage from '../pages/StoryDetailPage';
 import GlobalPage from '../pages/global';
+import RecommendPage from '../pages/RecommendPage';
 import ProfilePage from '../user/profile';
 
 
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
    {
     path: '/global',
     element: <GlobalPage />
+  },
+  {
+    path: '/recommend',
+    element: <RecommendPage />
   },
   {
     path: '/profile',

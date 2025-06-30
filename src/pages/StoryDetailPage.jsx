@@ -379,7 +379,7 @@ const StoryDetailPage = () => {
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
               >
-                ← 上一页
+                上一页
               </button>
               
               <div className="pagination-numbers">
@@ -414,7 +414,7 @@ const StoryDetailPage = () => {
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
               >
-                下一页 →
+                下一页
               </button>
             </div>
           </div>
