@@ -580,7 +580,6 @@ const GlobalPage = () => {
                     时间线视图
                   </button>
                 </div>
-                <div className="news-count">共 {filteredAndSortedNews.length} 条新闻</div>
               </div>
 
               {/* 新闻内容 */}
@@ -608,7 +607,7 @@ const GlobalPage = () => {
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
                     >
-                      ← 上一页
+                      上一页
                     </button>
                     
                     <div className="pagination-numbers">
@@ -643,7 +642,7 @@ const GlobalPage = () => {
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
                     >
-                      下一页 →
+                      下一页
                     </button>
                   </div>
                 </div>
