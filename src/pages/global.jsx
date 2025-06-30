@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import ThemeToggle from '../components/ThemeToggle';
@@ -20,6 +20,7 @@ const GlobalPage = () => {
     search: ''
   });
   const [isFilterChanged, setIsFilterChanged] = useState(false);
+  const [newsPerPage] = useState(3); // 每页显示3条新闻
   const navigate = useNavigate();
 
   // 新闻分类数据
@@ -161,10 +162,94 @@ const GlobalPage = () => {
     setCurrentPage(1);
   };
 
+  // 筛选和排序新闻 - 参考StoryDetailPage.jsx的逻辑
+  const filteredAndSortedNews = useMemo(() => {
+    let filtered = globalNewsData;
+
+    // 按分类筛选
+    if (appliedFilters.category !== 'all') {
+      filtered = filtered.filter(news => {
+        const categoryMap = {
+          'tech': '科技',
+          'politics': '政治',
+          'economy': '经济',
+          'environment': '环境',
+          'health': '医疗',
+          'education': '教育',
+          'sports': '体育'
+        };
+        return news.category === categoryMap[appliedFilters.category];
+      });
+    }
+
+    // 按搜索关键词筛选
+    if (appliedFilters.search) {
+      filtered = filtered.filter(news => 
+        news.title.toLowerCase().includes(appliedFilters.search.toLowerCase()) ||
+        news.summary.toLowerCase().includes(appliedFilters.search.toLowerCase())
+      );
+    }
+
+    // 按状态筛选（这里可以根据实际需求调整）
+    if (appliedFilters.status !== 'all') {
+      // 暂时跳过状态筛选，因为数据中没有状态字段
+    }
+
+    // 按重要程度筛选（这里可以根据实际需求调整）
+    if (appliedFilters.importance !== 'all') {
+      // 暂时跳过重要程度筛选，因为数据中没有重要程度字段
+    }
+
+    // 排序
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.published_at);
+      const dateB = new Date(b.published_at);
+      
+      switch (appliedFilters.sortBy) {
+        case 'latest':
+          return dateB - dateA;
+        case 'popular':
+          // 暂时按时间排序，实际可以根据浏览量等字段排序
+          return dateB - dateA;
+        case 'trending':
+          // 暂时按时间排序，实际可以根据趋势指标排序
+          return dateB - dateA;
+        case 'timeline':
+          // 暂时按时间排序，实际可以根据时间线长度排序
+          return dateB - dateA;
+        default:
+          return dateB - dateA;
+      }
+    });
+
+    return filtered;
+  }, [globalNewsData, appliedFilters]);
+
+  // 分页逻辑 - 参考StoryDetailPage.jsx的实现
+  const totalPages = Math.ceil(filteredAndSortedNews.length / newsPerPage);
+  const startIndex = (currentPage - 1) * newsPerPage;
+  const endIndex = startIndex + newsPerPage;
+  const currentNews = filteredAndSortedNews.slice(startIndex, endIndex);
+
+  // 分页处理函数
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // 滚动到内容区域顶部
+    const contentElement = document.querySelector('.main-content');
+    if (contentElement) {
+      contentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // 当筛选条件改变时重置到第一页
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [appliedFilters]);
+
   // 渲染网格视图 - 复用HomePage.jsx的新闻卡片样式
   const renderGridView = () => (
     <div className="news-grid">
-      {globalNewsData.map((news) => (
+      {currentNews.map((news) => (
         <div key={news.id} className="news-item" onClick={() => handleNewsClick(news.id)}>
           <div className="news-header">
             {/* 新闻分类标签 - 左上角 */}
@@ -195,7 +280,7 @@ const GlobalPage = () => {
   // 渲染列表视图 - 复用HomePage.jsx的新闻卡片样式
   const renderListView = () => (
     <div className="news-list">
-      {globalNewsData.map((news) => (
+      {currentNews.map((news) => (
         <div key={news.id} className="list-item" onClick={() => handleNewsClick(news.id)}>
           <div className="list-content">
             <div className="list-badges">
@@ -226,7 +311,7 @@ const GlobalPage = () => {
   // 渲染时间线视图 - 复用HomePage.jsx的新闻卡片样式
   const renderTimelineView = () => (
     <div className="timeline-view">
-      {globalNewsData.map((news, index) => (
+      {currentNews.map((news, index) => (
         <div key={news.id} className="timeline-item">
           <div className="timeline-dot">{index + 1}</div>
           <div className="timeline-content" onClick={() => handleNewsClick(news.id)}>
@@ -450,7 +535,7 @@ const GlobalPage = () => {
                     时间线视图
                   </button>
                 </div>
-                <div className="news-count">共 {globalNewsData.length} 条新闻</div>
+                <div className="news-count">共 {filteredAndSortedNews.length} 条新闻</div>
               </div>
 
               {/* 新闻内容 */}
@@ -458,41 +543,66 @@ const GlobalPage = () => {
               {currentView === 'list' && renderListView()}
               {currentView === 'timeline' && renderTimelineView()}
 
+              {/* 空状态显示 */}
+              {filteredAndSortedNews.length === 0 && (
+                <div className="no-news-results">
+                  <h3>暂无符合条件的新闻</h3>
+                  <p>请尝试调整筛选条件</p>
+                </div>
+              )}
+
               {/* 分页 */}
-              <div className="pagination">
-                <button
-                  className="pagination-btn"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                >
-                  上一页
-                </button>
-                <button
-                  className={`pagination-btn ${currentPage === 1 ? 'active' : ''}`}
-                  onClick={() => setCurrentPage(1)}
-                >
-                  1
-                </button>
-                <button
-                  className={`pagination-btn ${currentPage === 2 ? 'active' : ''}`}
-                  onClick={() => setCurrentPage(2)}
-                >
-                  2
-                </button>
-                <button
-                  className={`pagination-btn ${currentPage === 3 ? 'active' : ''}`}
-                  onClick={() => setCurrentPage(3)}
-                >
-                  3
-                </button>
-                <button
-                  className="pagination-btn"
-                  disabled={currentPage === 3}
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                >
-                  下一页
-                </button>
-              </div>
+              {totalPages > 1 && (
+                <div className="pagination">
+                  <div className="pagination-info">
+                    <span>共 {filteredAndSortedNews.length} 条新闻，第 {currentPage} / {totalPages} 页</span>
+                  </div>
+                  <div className="pagination-controls">
+                    <button 
+                      className="pagination-btn prev" 
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      ← 上一页
+                    </button>
+                    
+                    <div className="pagination-numbers">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+                        // 显示逻辑：当前页前后各2页
+                        if (
+                          page === 1 || 
+                          page === totalPages || 
+                          (page >= currentPage - 2 && page <= currentPage + 2)
+                        ) {
+                          return (
+                            <button
+                              key={page}
+                              className={`pagination-btn ${page === currentPage ? 'active' : ''}`}
+                              onClick={() => handlePageChange(page)}
+                            >
+                              {page}
+                            </button>
+                          );
+                        } else if (
+                          page === currentPage - 3 || 
+                          page === currentPage + 3
+                        ) {
+                          return <span key={page} className="pagination-ellipsis">...</span>;
+                        }
+                        return null;
+                      })}
+                    </div>
+                    
+                    <button 
+                      className="pagination-btn next" 
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      下一页 →
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
