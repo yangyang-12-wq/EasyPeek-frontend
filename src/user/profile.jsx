@@ -76,7 +76,7 @@ const ProfilePage = () => {
   return (
     <div className="profile-container">
       <Header />
-      <ThemeToggle className="fixed" style={{ position: 'fixed', top: '80px', right: '20px', zIndex: 1000 }} />
+      <ThemeToggle className="fixed" />
       
       <div className="profile-content">
         <div className="profile-grid">
