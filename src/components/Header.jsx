@@ -39,7 +39,7 @@ const Header = () => {
           <Link to="/" className="nav-link">首页</Link>
           <Link to="/stories" className="nav-link">热点故事</Link>
           <Link to="/global" className="nav-link">全球新闻</Link>
-          <Link to="/tech" className="nav-link">推荐</Link>
+          <Link to="/recommend" className="nav-link">推荐</Link>
         </nav>
 
         <div className="header-right">

@@ -218,7 +218,7 @@ body.dark .sort-filter label {
 }
 
 .filter-select {
-  padding: 12px 18px;
+  padding: 12px 40px 12px 18px;
   border: none;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.95);
@@ -229,12 +229,20 @@ body.dark .sort-filter label {
   transition: all 0.3s ease;
   min-width: 140px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
 }
 
 body.dark .filter-select {
   background: rgba(45, 45, 65, 0.95);
   color: #f9fafb;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
 }
 
 .filter-select:focus {
