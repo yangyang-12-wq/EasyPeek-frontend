@@ -154,9 +154,10 @@ export default function StoryPage() {
           return new Date(a.startDate) - new Date(b.startDate);
         case 'newsCount':
           return b.newsCount - a.newsCount;
-        case 'importance':
+        case 'importance': {
           const importanceOrder = { 'high': 3, 'medium': 2, 'low': 1 };
           return importanceOrder[b.importance] - importanceOrder[a.importance];
+        }
         default:
           return 0;
       }
@@ -204,14 +205,19 @@ export default function StoryPage() {
         <div className="search-filter-section">
           <div className="search-container">
             <div className="search-wrapper">
-              <input
-                type="text"
-                placeholder="搜索故事标题或描述..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-              />
-              <button className="search-btn">🔍</button>
+              <div className="search-input-container">
+                <input
+                  type="text"
+                  placeholder="搜索故事标题或描述..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+              <button className="search-btn">
+                <span className="search-btn-icon">🔍</span>
+                智能化搜索
+              </button>
             </div>
           </div>
 

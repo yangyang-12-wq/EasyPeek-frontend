@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import ThemeToggle from '../components/ThemeToggle';
@@ -12,8 +12,8 @@ const StoryDetailPage = () => {
   const [sortOrder, setSortOrder] = useState('desc'); // desc: 最新在前, asc: 最早在前
   const [filterType, setFilterType] = useState('all'); // all, major, minor
 
-  // 模拟故事详情数据
-  const mockStoryDetail = {
+  // 使用useMemo缓存模拟故事详情数据
+  const mockStoryDetail = useMemo(() => ({
     id: parseInt(id),
     title: "AI技术发展与竞争",
     description: "追踪全球人工智能技术的最新发展动态，包括各大科技公司的AI产品发布、技术突破、市场竞争等重要事件。",
@@ -25,10 +25,10 @@ const StoryDetailPage = () => {
     totalNews: 45,
     tags: ["人工智能", "科技竞争", "OpenAI", "Google", "微软", "技术创新"],
     summary: "本故事追踪了2024年以来AI领域的重大发展，从ChatGPT的持续更新到Google Gemini的发布，再到各大科技公司在AI领域的激烈竞争。这些事件不仅改变了科技行业的格局，也对全球经济和社会产生了深远影响。"
-  };
+  }), [id]);
 
-  // 模拟新闻时间线数据
-  const mockNewsTimeline = [
+  // 使用useMemo缓存模拟新闻时间线数据
+  const mockNewsTimeline = useMemo(() => [
     {
       id: 1,
       date: "2024-12-20",
@@ -117,7 +117,7 @@ const StoryDetailPage = () => {
       impact: "高",
       relatedNews: 8
     }
-  ];
+  ], []);
 
   useEffect(() => {
     // 模拟API调用
@@ -127,7 +127,7 @@ const StoryDetailPage = () => {
       setNewsTimeline(mockNewsTimeline);
       setLoading(false);
     }, 1000);
-  }, [id]);
+  }, [id, mockStoryDetail, mockNewsTimeline]);
 
   // 筛选和排序新闻
   const filteredAndSortedNews = newsTimeline
