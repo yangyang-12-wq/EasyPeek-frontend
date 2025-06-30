@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Login from '../user/Login';
@@ -12,6 +11,7 @@ import StoryDetailPage from '../pages/StoryDetailPage';
 import GlobalPage from '../pages/global';
 import RecommendPage from '../pages/RecommendPage';
 import ProfilePage from '../user/profile';
+import SearchPage from '../pages/search';
 
 
 const router = createBrowserRouter([
@@ -51,6 +51,10 @@ const router = createBrowserRouter([
   {
     path: '/recommend',
     element: <RecommendPage />
+  },
+  {
+    path: '/search',
+    element: <SearchPage />
   },
   {
     path: '/profile',
