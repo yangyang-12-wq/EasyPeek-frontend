@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import ThemeToggle from '../components/ThemeToggle';
+import { getStatusColor, getStatusText, getImportanceColor, getImportanceText } from '../utils/statusConfig';
 import './StoryPage.css';
 
 export default function StoryPage() {
@@ -183,32 +184,7 @@ export default function StoryPage() {
     setCurrentPage(1);
   }, [searchQuery, selectedCategory, sortBy]);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'ongoing': return '#10b981';
-      case 'ended': return '#6b7280';
-      case 'breaking': return '#ef4444';
-      default: return '#6b7280';
-    }
-  };
 
-  const getStatusText = (status) => {
-    switch (status) {
-      case 'ongoing': return '进行中';
-      case 'ended': return '已结束';
-      case 'breaking': return '突发';
-      default: return '未知';
-    }
-  };
-
-  const getImportanceColor = (importance) => {
-    switch (importance) {
-      case 'high': return '#ef4444';
-      case 'medium': return '#f59e0b';
-      case 'low': return '#10b981';
-      default: return '#6b7280';
-    }
-  };
 
   return (
     <div className="storypage-container">
