@@ -11,6 +11,8 @@ const StoryDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState('desc'); // desc: 最新在前, asc: 最早在前
   const [filterType, setFilterType] = useState('all'); // all, major, minor
+  const [currentPage, setCurrentPage] = useState(1);
+  const [newsPerPage] = useState(5); // 每页显示5条新闻
 
   // 使用useMemo缓存模拟故事详情数据
   const mockStoryDetail = useMemo(() => ({
@@ -137,6 +139,27 @@ const StoryDetailPage = () => {
       const dateB = new Date(`${b.date} ${b.time}`);
       return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
     });
+
+  // 分页逻辑
+  const totalPages = Math.ceil(filteredAndSortedNews.length / newsPerPage);
+  const startIndex = (currentPage - 1) * newsPerPage;
+  const endIndex = startIndex + newsPerPage;
+  const currentNews = filteredAndSortedNews.slice(startIndex, endIndex);
+
+  // 分页处理函数
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // 滚动到时间轴顶部
+    const timelineElement = document.querySelector('.news-timeline-container');
+    if (timelineElement) {
+      timelineElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // 当筛选条件改变时重置到第一页
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortOrder, filterType]);
 
   // 获取影响级别的颜色
   const getImpactColor = (impact) => {
@@ -292,7 +315,7 @@ const StoryDetailPage = () => {
         <div className="news-timeline-container">
           <div className="timeline-line"></div>
           
-          {filteredAndSortedNews.map((news, index) => (
+          {currentNews.map((news, index) => (
             <div key={news.id} className={`timeline-news-item ${index % 2 === 0 ? 'left' : 'right'}`}>
               <div className="timeline-news-marker">
                 <span className="news-type-icon">{getNewsTypeIcon(news.type)}</span>
@@ -341,6 +364,59 @@ const StoryDetailPage = () => {
           <div className="no-news-results">
             <h3>暂无符合条件的新闻</h3>
             <p>请尝试调整筛选条件</p>
+          </div>
+        )}
+
+        {/* 分页组件 */}
+        {totalPages > 1 && (
+          <div className="pagination-container">
+            <div className="pagination-info">
+              <span>共 {filteredAndSortedNews.length} 条新闻，第 {currentPage} / {totalPages} 页</span>
+            </div>
+            <div className="pagination-controls">
+              <button 
+                className="pagination-btn prev" 
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                ← 上一页
+              </button>
+              
+              <div className="pagination-numbers">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+                  // 显示逻辑：当前页前后各2页
+                  if (
+                    page === 1 || 
+                    page === totalPages || 
+                    (page >= currentPage - 2 && page <= currentPage + 2)
+                  ) {
+                    return (
+                      <button
+                        key={page}
+                        className={`pagination-number ${page === currentPage ? 'active' : ''}`}
+                        onClick={() => handlePageChange(page)}
+                      >
+                        {page}
+                      </button>
+                    );
+                  } else if (
+                    page === currentPage - 3 || 
+                    page === currentPage + 3
+                  ) {
+                    return <span key={page} className="pagination-ellipsis">...</span>;
+                  }
+                  return null;
+                })}
+              </div>
+              
+              <button 
+                className="pagination-btn next" 
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                下一页 →
+              </button>
+            </div>
           </div>
         )}
       </div>

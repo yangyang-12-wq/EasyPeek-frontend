@@ -8,6 +8,8 @@ export default function StoryPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('latest');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [storiesPerPage] = useState(4); // 每页显示4个故事
 
   // 模拟故事数据
   const stories = [
@@ -163,6 +165,24 @@ export default function StoryPage() {
       }
     });
 
+  // 分页逻辑
+  const totalPages = Math.ceil(filteredStories.length / storiesPerPage);
+  const startIndex = (currentPage - 1) * storiesPerPage;
+  const endIndex = startIndex + storiesPerPage;
+  const currentStories = filteredStories.slice(startIndex, endIndex);
+
+  // 分页处理函数
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // 滚动到页面顶部
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 当筛选条件改变时重置到第一页
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory, sortBy]);
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'ongoing': return '#10b981';
@@ -257,7 +277,7 @@ export default function StoryPage() {
         <div className="timeline-container">
           <div className="timeline-line"></div>
           
-          {filteredStories.map((story, index) => (
+          {currentStories.map((story, index) => (
             <div key={story.id} className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`}>
               <div className="timeline-marker">
                 <span className="timeline-icon">{story.thumbnail}</span>
@@ -333,6 +353,59 @@ export default function StoryPage() {
           <div className="no-results">
             <h3>未找到匹配的故事</h3>
             <p>尝试调整搜索关键词或筛选条件</p>
+          </div>
+        )}
+
+        {/* 分页组件 */}
+        {totalPages > 1 && (
+          <div className="pagination-container">
+            <div className="pagination-info">
+              <span>共 {filteredStories.length} 个故事，第 {currentPage} / {totalPages} 页</span>
+            </div>
+            <div className="pagination-controls">
+              <button 
+                className="pagination-btn prev" 
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                ← 上一页
+              </button>
+              
+              <div className="pagination-numbers">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+                  // 显示逻辑：当前页前后各2页
+                  if (
+                    page === 1 || 
+                    page === totalPages || 
+                    (page >= currentPage - 2 && page <= currentPage + 2)
+                  ) {
+                    return (
+                      <button
+                        key={page}
+                        className={`pagination-number ${page === currentPage ? 'active' : ''}`}
+                        onClick={() => handlePageChange(page)}
+                      >
+                        {page}
+                      </button>
+                    );
+                  } else if (
+                    page === currentPage - 3 || 
+                    page === currentPage + 3
+                  ) {
+                    return <span key={page} className="pagination-ellipsis">...</span>;
+                  }
+                  return null;
+                })}
+              </div>
+              
+              <button 
+                className="pagination-btn next" 
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                下一页 →
+              </button>
+            </div>
           </div>
         )}
       </div>
