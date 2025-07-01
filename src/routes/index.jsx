@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Login from '../pages/user/Login';
 import Register from '../pages/user/Register';
 import ProtectedRoute from '../components/ProtectedRoute';
+import AdminProtectedRoute from '../components/admin/AdminProtectedRoute';
 
 import HomePage from '../pages/HomePage';
 import NewsPage from '../pages/newspage';
@@ -13,11 +14,16 @@ import RecommendPage from '../pages/RecommendPage';
 import ProfilePage from '../pages/user/profile';
 import SearchPage from '../pages/search';
 
+// Admin pages
+import AdminLogin from '../pages/admin/AdminLogin';
+import AdminDashboard from '../pages/admin/AdminDashboard';
+import UserManagement from '../pages/admin/UserManagement';
+import RSSManagement from '../pages/admin/RSSManagement';
+
 
 const router = createBrowserRouter([
   {
     path: '/',
-
     element: <Navigate to="/HomePage" replace />
   },
   {
@@ -44,7 +50,7 @@ const router = createBrowserRouter([
     path: '/story/:id',
     element: <StoryDetailPage />
   },
-   {
+  {
     path: '/global',
     element: <GlobalPage />
   },
@@ -58,10 +64,55 @@ const router = createBrowserRouter([
   },
   {
     path: '/profile',
-    element:(
-      <ProtectedRoute> 
-        <ProfilePage /> 
+    element: (
+      <ProtectedRoute>
+        <ProfilePage />
       </ProtectedRoute>
+    )
+  },
+  // Admin routes
+  {
+    path: '/admin/login',
+    element: <AdminLogin />
+  },
+  {
+    path: '/admin',
+    element: (
+      <AdminProtectedRoute>
+        <AdminDashboard />
+      </AdminProtectedRoute>
+    )
+  },
+  {
+    path: '/admin/users',
+    element: (
+      <AdminProtectedRoute>
+        <UserManagement />
+      </AdminProtectedRoute>
+    )
+  },
+  {
+    path: '/admin/events',
+    element: (
+      <AdminProtectedRoute>
+        <AdminDashboard />
+      </AdminProtectedRoute>
+    )
+  },
+  {
+    path: '/admin/news',
+    element: (
+      <AdminProtectedRoute>
+        <AdminDashboard />
+      </AdminProtectedRoute>
+    )
+  },
+  {
+    path: '/admin/rss-sources',
+    element: (
+      <AdminProtectedRoute>
+        <RSSManagement />
+      </AdminProtectedRoute>
     )
   }
 ]);

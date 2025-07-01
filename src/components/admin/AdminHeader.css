@@ -1,0 +1,368 @@
+.admin-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(79, 70, 229, 0.1);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+body.dark .admin-header {
+    background: rgba(26, 26, 46, 0.95);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.admin-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    height: 70px;
+}
+
+/* Logo区域 */
+.admin-header-left {
+    display: flex;
+    align-items: center;
+}
+
+.admin-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    padding: 8px 16px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.admin-logo:hover {
+    background: rgba(79, 70, 229, 0.1);
+    text-decoration: none;
+}
+
+body.dark .admin-logo:hover {
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.admin-logo-icon {
+    font-size: 28px;
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+.admin-logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+body.dark .admin-logo-text {
+    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+@keyframes logoFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+/* 导航区域 */
+.admin-header-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #64748b;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+body.dark .admin-nav-link {
+    color: #94a3b8;
+}
+
+.admin-nav-link:hover {
+    color: #4f46e5;
+    background: rgba(79, 70, 229, 0.1);
+    text-decoration: none;
+}
+
+body.dark .admin-nav-link:hover {
+    color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.admin-nav-link.active {
+    color: #4f46e5;
+    background: rgba(79, 70, 229, 0.1);
+    font-weight: 600;
+}
+
+body.dark .admin-nav-link.active {
+    color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.admin-nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 3px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    border-radius: 2px;
+}
+
+body.dark .admin-nav-link.active::after {
+    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+}
+
+.nav-icon {
+    font-size: 16px;
+}
+
+.nav-text {
+    white-space: nowrap;
+}
+
+/* 右侧区域 */
+.admin-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.back-to-site-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(79, 70, 229, 0.1);
+    color: #4f46e5;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+body.dark .back-to-site-btn {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+}
+
+.back-to-site-btn:hover {
+    background: rgba(79, 70, 229, 0.2);
+    transform: translateY(-2px);
+}
+
+body.dark .back-to-site-btn:hover {
+    background: rgba(139, 92, 246, 0.2);
+}
+
+.back-to-site-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* 用户菜单 */
+.admin-user-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: rgba(79, 70, 229, 0.05);
+    border: 1px solid rgba(79, 70, 229, 0.1);
+    transition: all 0.3s ease;
+}
+
+body.dark .admin-user-menu {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.admin-user-menu:hover {
+    background: rgba(79, 70, 229, 0.1);
+    border-color: rgba(79, 70, 229, 0.2);
+}
+
+body.dark .admin-user-menu:hover {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+body.dark .admin-avatar {
+    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+}
+
+.admin-user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.admin-username {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1f2937;
+    line-height: 1;
+}
+
+body.dark .admin-username {
+    color: #f9fafb;
+}
+
+.admin-role {
+    font-size: 0.75rem;
+    color: #6b7280;
+    line-height: 1;
+}
+
+body.dark .admin-role {
+    color: #9ca3af;
+}
+
+.admin-logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.admin-logout-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(1.05);
+}
+
+.admin-logout-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .admin-header-nav {
+        gap: 4px;
+    }
+
+    .admin-nav-link {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+
+    .nav-text {
+        display: none;
+    }
+
+    .nav-icon {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-header-content {
+        padding: 8px 16px;
+        height: 60px;
+    }
+
+    .admin-logo-text {
+        display: none;
+    }
+
+    .admin-header-nav {
+        gap: 2px;
+    }
+
+    .admin-nav-link {
+        padding: 8px 10px;
+    }
+
+    .admin-user-details {
+        display: none;
+    }
+
+    .admin-user-menu {
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-header-content {
+        padding: 8px 12px;
+    }
+
+    .admin-header-nav {
+        display: none;
+    }
+
+    .back-to-site-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .back-to-site-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+}
