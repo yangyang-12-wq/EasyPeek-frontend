@@ -35,11 +35,19 @@ const Register = () => {
         message.success('注册成功！请登录');
         navigate('/login');
       } else {
-        message.error(response.data.message || '注册失败');
+        // 根据后端返回的错误码显示具体错误信息
+        const errorMessage = response.data.message || '注册失败';
+        message.error(errorMessage);
       }
-    } catch (error) {
-      console.error('Register error:', error);
-      message.error('注册失败，请检查网络连接');
+    }  catch (error) {
+      console.error('Login error:', error);
+      if (error.response) {
+        // 如果后端返回了具体的错误信息
+        message.error(error.response.data.message || '登录失败，服务器错误');
+      } else {
+        // 网络错误等
+        message.error('登录失败，请检查网络连接');
+      }
     } finally {
       setLoading(false);
     }
