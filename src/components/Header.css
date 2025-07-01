@@ -89,6 +89,48 @@
   gap: 12px;
 }
 
+.admin-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.admin-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.admin-icon {
+  font-size: 16px;
+  filter: grayscale(1) brightness(2);
+  transition: all 0.3s ease;
+}
+
+.admin-link:hover .admin-icon {
+  filter: grayscale(0) brightness(1);
+  transform: scale(1.1);
+}
+
+.header.dark .admin-link {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.header.dark .admin-link:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
 .profile-btn,
 .logout-btn {
   background: rgba(255, 255, 255, 0.3);
@@ -128,19 +170,19 @@
     height: 56px;
     justify-content: space-between;
   }
-  
+
   .header-nav {
     display: none;
   }
-  
+
   .logo {
     font-size: 20px;
   }
-  
+
   .logo-icon {
     font-size: 24px;
   }
-  
+
   .profile-btn,
   .logout-btn {
     padding: 6px 12px;
@@ -152,11 +194,11 @@
   .header-content {
     padding: 0 12px;
   }
-  
+
   .header-right {
     gap: 8px;
   }
-  
+
   .profile-btn,
   .logout-btn {
     padding: 4px 8px;
