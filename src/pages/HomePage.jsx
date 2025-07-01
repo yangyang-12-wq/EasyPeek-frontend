@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import ThemeToggle from "../components/ThemeToggle";
@@ -56,44 +56,68 @@ export default function HomePage() {
     },
   ];
 
-  const featuredNews = [
-    {
-      id: 1,
-      title: "科技巨头AI竞赛白热化，行业格局面临重大变革",
-      content: "OpenAI、Google、微软等科技巨头在人工智能领域展开激烈竞争，新产品发布频繁，投资规模扩大。",
-      summary: "OpenAI、Google、微软等科技巨头在人工智能领域展开激烈竞争，新产品发布频繁，投资规模扩大。",
-      source: "科技日报",
-      category: "科技",
-      published_at: "2024-01-15 10:30",
-      created_by: 1,
-      is_active: true,
-      belonged_event: "AI技术发展",
-    },
-    {
-      id: 2,
-      title: "全球气候变化新进展：联合国气候大会达成重要共识",
-      content: "第28届联合国气候变化大会在迪拜闭幕，各国就减排目标和气候资金达成新的协议。",
-      summary: "第28届联合国气候变化大会在迪拜闭幕，各国就减排目标和气候资金达成新的协议。",
-      source: "环球时报",
-      category: "环境",
-      published_at: "2024-01-14 16:45",
-      created_by: 1,
-      is_active: true,
-      belonged_event: "气候变会议",
-    },
-    {
-      id: 3,
-      title: "新能源汽车市场变革：传统车企加速转型",
-      content: "特斯拉、比亚迪等新能源车企持续领跑市场，传统汽车制造商纷纷加大电动化投入。",
-      summary: "特斯拉、比亚迪等新能源车企持续领跑市场，传统汽车制造商纷纷加大电动化投入。",
-      source: "汽车之家",
-      category: "汽车",
-      published_at: "2024-01-13 14:20",
-      created_by: 1,
-      is_active: true,
-      belonged_event: "新能源汽车发展",
-    },
-  ];
+  const [featuredNews, setFeaturedNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 获取新闻数据
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/v1/news');
+        const result = await response.json();
+        
+        if (result.code === 200 && result.data) {
+          // 取前3条新闻作为特色新闻
+          setFeaturedNews(result.data.slice(0, 3));
+        }
+      } catch (err) {
+        console.error('获取新闻数据失败:', err);
+        // 如果API调用失败，使用默认数据
+        setFeaturedNews([
+          {
+            id: 1,
+            title: "科技巨头AI竞赛白热化，行业格局面临重大变革",
+            content: "OpenAI、Google、微软等科技巨头在人工智能领域展开激烈竞争，新产品发布频繁，投资规模扩大。",
+            summary: "OpenAI、Google、微软等科技巨头在人工智能领域展开激烈竞争，新产品发布频繁，投资规模扩大。",
+            source: "科技日报",
+            category: "科技",
+            published_at: "2024-01-15 10:30",
+            created_by: 1,
+            is_active: true,
+            belonged_event: "AI技术发展",
+          },
+          {
+            id: 2,
+            title: "全球气候变化新进展：联合国气候大会达成重要共识",
+            content: "第28届联合国气候变化大会在迪拜闭幕，各国就减排目标和气候资金达成新的协议。",
+            summary: "第28届联合国气候变化大会在迪拜闭幕，各国就减排目标和气候资金达成新的协议。",
+            source: "环球时报",
+            category: "环境",
+            published_at: "2024-01-14 16:45",
+            created_by: 1,
+            is_active: true,
+            belonged_event: "气候变会议",
+          },
+          {
+            id: 3,
+            title: "新能源汽车市场变革：传统车企加速转型",
+            content: "特斯拉、比亚迪等新能源车企持续领跑市场，传统汽车制造商纷纷加大电动化投入。",
+            summary: "特斯拉、比亚迪等新能源车企持续领跑市场，传统汽车制造商纷纷加大电动化投入。",
+            source: "汽车之家",
+            category: "汽车",
+            published_at: "2024-01-13 14:20",
+            created_by: 1,
+            is_active: true,
+            belonged_event: "新能源汽车发展",
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
 
 
 

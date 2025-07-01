@@ -10,26 +10,6 @@ export default function NewsPage() {
   const [error, setError] = useState(null);
   const [newsData, setNewsData] = useState(null);
 
-  // 模拟新闻详情数据
-  const mockNewsData = {
-    id: 1,
-    title: "科技巨头AI竞赛白热化，行业格局面临重大变革",
-    content: "OpenAI、Google、微软等科技巨头在人工智能领域展开激烈竞争，新产品发布频繁，投资规模不断扩大。这场竞争不仅涉及技术突破，更关系到未来科技行业的主导权。各大公司纷纷加大投入，从人才争夺到技术研发，竞争日趋白热化。",
-    summary: "OpenAI、Google、微软等科技巨头在人工智能领域展开激烈竞争，新产品发布频繁，投资规模不断扩大。",
-    source: "科技日报",
-    category: "科技",
-    published_at: "2024-01-15 10:30",
-    created_by: 1,
-    is_active: true,
-    belonged_event: "AI技术发展",
-    readCount: 15420,
-    likeCount: 892,
-    commentCount: 156,
-    followCount: 1234,
-    tags: ["人工智能", "科技", "竞争", "创新"],
-    aiPrediction: "根据AI分析，该事件后续可能出现更多合作与并购，预计影响持续3-6个月",
-  };
-
   // 事件时间线数据
   const timeline = [
     {
@@ -110,18 +90,30 @@ export default function NewsPage() {
   };
 
   useEffect(() => {
-    // 模拟API调用
+    // 从新API获取新闻数据
     const fetchNewsData = async () => {
       try {
         setLoading(true);
-        // 模拟网络延迟
-        await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // 根据ID获取对应的新闻数据
-        const data = { ...mockNewsData, id: parseInt(id) };
-        setNewsData(data);
-        setError(null);
-      } catch {
+        // 从新接口获取新闻列表，然后根据ID筛选
+        const response = await fetch('http://localhost:8080/api/v1/news');
+        const result = await response.json();
+        
+        if (result.code === 200 && result.data) {
+          // 根据ID查找对应的新闻
+          const targetNews = result.data.find(news => news.id === parseInt(id));
+          
+          if (targetNews) {
+            setNewsData(targetNews);
+            setError(null);
+          } else {
+            setError("新闻不存在");
+          }
+        } else {
+          setError("获取新闻数据失败");
+        }
+      } catch (err) {
+        console.error('获取新闻数据失败:', err);
         setError("获取新闻详情失败，请稍后重试");
       } finally {
         setLoading(false);
@@ -130,6 +122,34 @@ export default function NewsPage() {
 
     fetchNewsData();
   }, [id]);
+
+  // 格式化时间显示
+  const formatTime = (timeString) => {
+    if (!timeString) return '';
+    try {
+      const date = new Date(timeString);
+      return date.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch {
+      return timeString;
+    }
+  };
+
+  // 解析标签字符串
+  const parseTags = (tagsString) => {
+    if (!tagsString) return [];
+    try {
+      return JSON.parse(tagsString);
+    } catch {
+      return [];
+    }
+  };
+
   // 加载状态
   if (loading) {
     return (
@@ -176,22 +196,27 @@ export default function NewsPage() {
                   <div className="news-category-badge">
                     {newsData.category}
                   </div>
-                  <div 
-                    className="news-event-badge"
-                    style={{
-                      backgroundColor: eventConfig[newsData.belonged_event]?.bgColor
-                    }}
-                  >
-                    {eventConfig[newsData.belonged_event]?.label}
-                  </div>
+                  {newsData.image_url && (
+                    <div className="news-image-container">
+                      <img 
+                        src={newsData.image_url} 
+                        alt={newsData.title}
+                        className="news-header-image"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
                 
                 <h1 className="news-title">{newsData.title}</h1>
                 <p className="news-summary">{newsData.summary}</p>
                 
                 <div className="news-meta">
-                  <span className="news-time">{newsData.published_at}</span>
+                  <span className="news-time">{formatTime(newsData.published_at)}</span>
                   <span className="news-source">{newsData.source}</span>
+                  {newsData.author && <span className="news-author">作者: {newsData.author}</span>}
                 </div>
 
                 {/* 统计信息 */}
@@ -201,41 +226,39 @@ export default function NewsPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    <span className="stat-value">{newsData.readCount}</span>
+                    <span className="stat-value">{newsData.view_count || 0}</span>
                     <span className="stat-label">阅读量</span>
                   </div>
                   <div className="stat-item">
                     <svg className="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
-                    <span className="stat-value">{newsData.likeCount}</span>
+                    <span className="stat-value">{newsData.like_count || 0}</span>
                     <span className="stat-label">点赞数</span>
                   </div>
                   <div className="stat-item">
                     <svg className="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
-                    <span className="stat-value">{newsData.commentCount}</span>
+                    <span className="stat-value">{newsData.comment_count || 0}</span>
                     <span className="stat-label">评论数</span>
                   </div>
                   <div className="stat-item">
                     <svg className="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
                     </svg>
-                    <span className="stat-value">{newsData.followCount}</span>
-                    <span className="stat-label">关注数</span>
+                    <span className="stat-value">{newsData.share_count || 0}</span>
+                    <span className="stat-label">分享数</span>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* AI预测 */}
-            <div className="content-card ai-prediction-card">
-              <div className="card-header">
-                <h2 className="card-title">🤖 AI趋势预测</h2>
-              </div>
-              <div className="card-body">
-                <p className="ai-prediction-text">{newsData.aiPrediction}</p>
+                {/* 热度分数 */}
+                {newsData.hotness_score && (
+                  <div className="hotness-score">
+                    <span className="hotness-label">热度指数:</span>
+                    <span className="hotness-value">{newsData.hotness_score.toFixed(1)}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -250,14 +273,31 @@ export default function NewsPage() {
                 </div>
                 
                 {/* 标签区域 */}
-                <div className="news-tags-section">
-                  <span className="tags-label">相关标签：</span>
-                  <div className="tags-container">
-                    {newsData.tags.map((tag, index) => (
-                      <span key={index} className="tag">{tag}</span>
-                    ))}
+                {newsData.tags && (
+                  <div className="news-tags-section">
+                    <span className="tags-label">相关标签：</span>
+                    <div className="tags-container">
+                      {parseTags(newsData.tags).map((tag, index) => (
+                        <span key={index} className="tag">{tag}</span>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {/* 原文链接 */}
+                {newsData.link && (
+                  <div className="original-link-section">
+                    <span className="link-label">原文链接：</span>
+                    <a 
+                      href={newsData.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="original-link"
+                    >
+                      {newsData.source} - 查看原文
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -313,9 +353,9 @@ export default function NewsPage() {
             <div className="sidebar-card">
               <div className="follow-section">
                 <button className="follow-btn">
-                  👥 关注此事件 ({newsData.followCount})
+                  👥 关注此新闻 ({newsData.share_count || 0})
                 </button>
-                <p className="follow-desc">关注后将收到事件后续发展提醒</p>
+                <p className="follow-desc">关注后将收到相关新闻提醒</p>
               </div>
             </div>
 
@@ -339,22 +379,22 @@ export default function NewsPage() {
 
             {/* 热门评论 */}
             <div className="sidebar-card">
-              <h3 className="card-title">💬 热门评论 ({newsData.commentCount})</h3>
+              <h3 className="card-title">💬 热门评论 ({newsData.comment_count || 0})</h3>
               <div className="comments-list">
                 <div className="comment-item">
                   <div className="comment-avatar">用</div>
                   <div className="comment-content">
                     <div className="comment-author">用户123</div>
-                    <div className="comment-text">AI竞争确实激烈，期待看到更多创新产品</div>
+                    <div className="comment-text">这是一条很有价值的新闻</div>
                     <div className="comment-time">2小时前</div>
                   </div>
                 </div>
                 
                 <div className="comment-item">
-                  <div className="comment-avatar">科</div>
+                  <div className="comment-avatar">观</div>
                   <div className="comment-content">
-                    <div className="comment-author">科技观察者</div>
-                    <div className="comment-text">这轮竞争对消费者来说是好事</div>
+                    <div className="comment-author">观察者</div>
+                    <div className="comment-text">值得关注的发展趋势</div>
                     <div className="comment-time">3小时前</div>
                   </div>
                 </div>
