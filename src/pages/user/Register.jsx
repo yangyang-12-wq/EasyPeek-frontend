@@ -3,8 +3,8 @@ import { Form, Input, Button, Card, Row, Col, message, Space, Progress } from 'a
 import { UserOutlined, LockOutlined, MailOutlined, SafetyOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useTheme } from '../contexts/ThemeContext';
-import ThemeToggle from '../components/ThemeToggle';
+import { useTheme } from '../../contexts/ThemeContext';
+import ThemeToggle from '../../components/ThemeToggle';
 import './Register.css';
 
 const Register = () => {
@@ -15,9 +15,9 @@ const Register = () => {
 
   const checkPasswordStrength = (password) => {
     let strength = 0;
-    if (password.length >= 6) strength += 25;
     if (password.length >= 8) strength += 25;
-    if (/[A-Z]/.test(password)) strength += 25;
+    if (password.length >= 12) strength += 25;
+    if (/[A-Za-z]/.test(password)) strength += 25;
     if (/[0-9]/.test(password)) strength += 25;
     setPasswordStrength(strength);
   };
@@ -26,20 +26,28 @@ const Register = () => {
     setLoading(true);
     try {
       const response = await axios.post('http://localhost:8080/api/v1/auth/register', {
-        Username: values.username,
-        Email: values.email,
-        Password: values.password,
+        username: values.username,
+        email: values.email,
+        password: values.password,
       });
 
-      if (response.data.success) {
+      if (response.data.code === 200) {
         message.success('注册成功！请登录');
         navigate('/login');
       } else {
-        message.error(response.data.message || '注册失败');
+        // 根据后端返回的错误码显示具体错误信息
+        const errorMessage = response.data.message || '注册失败';
+        message.error(errorMessage);
       }
-    } catch (error) {
-      console.error('Register error:', error);
-      message.error('注册失败，请检查网络连接');
+    }  catch (error) {
+      console.error('Login error:', error);
+      if (error.response) {
+        // 如果后端返回了具体的错误信息
+        message.error(error.response.data.message || '登录失败，服务器错误');
+      } else {
+        // 网络错误等
+        message.error('登录失败，请检查网络连接');
+      }
     } finally {
       setLoading(false);
     }
@@ -126,7 +134,11 @@ const Register = () => {
                     name="password"
                     rules={[
                       { required: true, message: '请输入密码!' },
-                      { min: 6, message: '密码至少6个字符!' }
+                      { min: 8, message: '密码至少8个字符!' },
+                      {
+                        pattern: /^(?=.*[A-Za-z])(?=.*\d)/,
+                        message: '密码必须包含至少一个字母和一个数字!'
+                      }
                     ]}
                   >
                     <Input.Password

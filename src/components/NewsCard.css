@@ -46,6 +46,27 @@
   text-overflow: ellipsis;
 }
 
+/* 新闻图片容器 */
+.news-image-container {
+  flex: 1;
+  max-width: 120px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-left: 8px;
+}
+
+.news-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.news-image:hover {
+  transform: scale(1.05);
+}
+
 .news-title {
   font-size: 16px;
   font-weight: 600;
@@ -83,6 +104,35 @@
 .news-time,
 .news-source {
   font-weight: 500;
+}
+
+.news-author {
+  color: var(--text-tertiary);
+  font-style: italic;
+  font-size: 11px;
+}
+
+/* 统计信息 */
+.news-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.news-stats .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.news-stats .stat-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--text-tertiary);
 }
 
 /* 响应式设计 */
