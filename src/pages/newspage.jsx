@@ -11,6 +11,11 @@ export default function NewsPage() {
   const [newsData, setNewsData] = useState(null);
   const [relatedNews, setRelatedNews] = useState([]);
   const [relatedLoading, setRelatedLoading] = useState(false);
+  
+  // 筛选相关状态
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('latest'); // 'latest' 或 'hot'
+  const [allCategories, setAllCategories] = useState([]);
 
 
   // 格式化新闻数据，处理字段映射
@@ -41,12 +46,51 @@ export default function NewsPage() {
 
  
 
-  // 获取相关新闻 - 基于标签推荐
-  const fetchRelatedNews = async (newsId, currentNewsTags) => {
+  // 获取分类列表
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/news?limit=100`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (result.code === 200 && result.data) {
+        // 提取所有分类并去重
+        const categories = [...new Set(result.data.map(news => news.category).filter(Boolean))];
+        setAllCategories(categories);
+      }
+    } catch (error) {
+      console.error('获取分类失败:', error);
+      setAllCategories(['科技', '政治', '经济', '环境', '医疗', '教育']); // 默认分类
+    }
+  };
+
+  // 获取筛选后的新闻
+  const fetchFilteredNews = async (newsId) => {
     try {
       setRelatedLoading(true);
-      // 获取更多新闻用于筛选
-      const response = await fetch(`http://localhost:8080/api/v1/news/latest?limit=50`);
+      
+      let endpoint = '';
+      let queryParams = new URLSearchParams();
+      
+      // 根据分类和排序方式选择API端点
+      if (selectedCategory !== 'all') {
+        // 使用按分类筛选的API
+        endpoint = `/category/${selectedCategory}`;
+        queryParams.append('sort', sortBy);
+        queryParams.append('limit', '20');
+      } else {
+        // 使用原有的热门或最新API
+        if (sortBy === 'hot') {
+          endpoint = '/hot';
+        } else {
+          endpoint = '/latest';
+        }
+        queryParams.append('limit', '20');
+      }
+      
+      const response = await fetch(`http://localhost:8080/api/v1/news${endpoint}?${queryParams.toString()}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -56,38 +100,11 @@ export default function NewsPage() {
         // 过滤掉当前新闻
         const filtered = result.data.filter(news => news.id !== parseInt(newsId));
         
-        // 如果当前新闻有标签，基于标签推荐
-        if (currentNewsTags && currentNewsTags.length > 0) {
-          const relatedByTags = filtered.filter(news => {
-            if (!news.tags) return false;
-            const newsTags = Array.isArray(news.tags) ? news.tags : news.tags.split(',').map(tag => tag.trim());
-            // 检查是否有共同标签
-            return newsTags.some(tag => currentNewsTags.includes(tag));
-          });
-          
-          // 按共同标签数量排序
-          relatedByTags.sort((a, b) => {
-            const aTagsArray = Array.isArray(a.tags) ? a.tags : a.tags.split(',').map(tag => tag.trim());
-            const bTagsArray = Array.isArray(b.tags) ? b.tags : b.tags.split(',').map(tag => tag.trim());
-            const aCommonTags = aTagsArray.filter(tag => currentNewsTags.includes(tag)).length;
-            const bCommonTags = bTagsArray.filter(tag => currentNewsTags.includes(tag)).length;
-            return bCommonTags - aCommonTags;
-          });
-          
-          // 如果有基于标签的相关新闻，优先使用
-          if (relatedByTags.length > 0) {
-            const formattedRelated = formatRelatedNews(relatedByTags.slice(0, 3));
-            setRelatedNews(formattedRelated);
-            return;
-          }
-        }
-        
-        // 如果没有标签或没有找到相关标签的新闻，则按时间推荐
-        const formattedRelated = formatRelatedNews(filtered.slice(0, 3));
+        const formattedRelated = formatRelatedNews(filtered.slice(0, 6));
         setRelatedNews(formattedRelated);
       }
     } catch (error) {
-      console.error('获取相关新闻失败:', error);
+      console.error('获取筛选新闻失败:', error);
       setRelatedNews([]);
     } finally {
       setRelatedLoading(false);
@@ -102,9 +119,7 @@ export default function NewsPage() {
   };
 
   useEffect(() => {
-
     // 从后端API获取新闻详情
-
     const fetchNewsData = async () => {
       try {
         setLoading(true);
@@ -120,15 +135,11 @@ export default function NewsPage() {
            const formattedData = formatNewsData(result.data);
            setNewsData(formattedData);
            setError(null);
-           // 获取相关新闻 - 传入当前新闻的标签
-           fetchRelatedNews(id, formattedData.tags);
          } else {
            throw new Error(result.message || '获取新闻详情失败');
          }
       } catch (error) {
         console.error('获取新闻详情失败:', error);
-
- 
         setError("获取新闻详情失败，请稍后重试");
       } finally {
         setLoading(false);
@@ -136,7 +147,15 @@ export default function NewsPage() {
     };
 
     fetchNewsData();
+    fetchCategories(); // 获取分类列表
   }, [id]);
+
+  // 当筛选条件改变时重新获取相关新闻
+  useEffect(() => {
+    if (id) {
+      fetchFilteredNews(id);
+    }
+  }, [selectedCategory, sortBy, id]);
 
   // 格式化时间显示
   const formatTime = (timeString) => {
@@ -432,6 +451,46 @@ export default function NewsPage() {
             {/* 相关新闻 */}
             <div className="sidebar-card">
               <h3 className="card-title">相关新闻</h3>
+              
+              {/* 筛选控件 */}
+              <div className="news-filters">
+                {/* 排序方式 */}
+                <div className="filter-group">
+                  <label className="filter-label">排序方式</label>
+                  <div className="filter-buttons">
+                    <button 
+                      className={`filter-btn ${sortBy === 'latest' ? 'active' : ''}`}
+                      onClick={() => setSortBy('latest')}
+                    >
+                      最新发布
+                    </button>
+                    <button 
+                      className={`filter-btn ${sortBy === 'hot' ? 'active' : ''}`}
+                      onClick={() => setSortBy('hot')}
+                    >
+                      热度最高
+                    </button>
+                  </div>
+                </div>
+
+                {/* 分类筛选 */}
+                <div className="filter-group">
+                  <label className="filter-label">新闻分类</label>
+                  <select 
+                    className="filter-select"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    <option value="all">全部分类</option>
+                    {allCategories.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              
               <div className="related-news-list">
                 {relatedLoading ? (
                   <div className="loading-container">

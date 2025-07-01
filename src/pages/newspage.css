@@ -1514,4 +1514,167 @@
   body.dark .news-content {
     color: #e5e7eb;
   }
+
+  /* 筛选控件样式 */
+  .news-filters {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(248, 250, 252, 0.8);
+    border-radius: 12px;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  body.dark .news-filters {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(71, 85, 105, 0.6);
+  }
+
+  .filter-group {
+    margin-bottom: 16px;
+  }
+
+  .filter-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .filter-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  body.dark .filter-label {
+    color: #d1d5db;
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .filter-btn {
+    flex: 1;
+    padding: 8px 16px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    color: #374151;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .filter-btn:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+  }
+
+  .filter-btn.active {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    color: #ffffff;
+  }
+
+  .filter-btn.active:hover {
+    background: #4338ca;
+    border-color: #4338ca;
+  }
+
+  body.dark .filter-btn {
+    background: #374151;
+    border-color: #4b5563;
+    color: #d1d5db;
+  }
+
+  body.dark .filter-btn:hover {
+    background: #4b5563;
+    border-color: #6b7280;
+  }
+
+  body.dark .filter-btn.active {
+    background: #8b5cf6;
+    border-color: #8b5cf6;
+    color: #ffffff;
+  }
+
+  body.dark .filter-btn.active:hover {
+    background: #7c3aed;
+    border-color: #7c3aed;
+  }
+
+  .filter-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    color: #374151;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-select:hover {
+    border-color: #d1d5db;
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+
+  body.dark .filter-select {
+    background: #374151;
+    border-color: #4b5563;
+    color: #d1d5db;
+  }
+
+  body.dark .filter-select:hover {
+    border-color: #6b7280;
+  }
+
+  body.dark .filter-select:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  }
+
+  /* 没有相关新闻时的样式 */
+  .no-related-news {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b7280;
+  }
+
+  body.dark .no-related-news {
+    color: #9ca3af;
+  }
+
+  .no-related-news p {
+    margin: 0;
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    .news-filters {
+      padding: 12px;
+    }
+
+    .filter-buttons {
+      flex-direction: column;
+    }
+
+    .filter-btn {
+      padding: 10px 16px;
+    }
+  }
   
