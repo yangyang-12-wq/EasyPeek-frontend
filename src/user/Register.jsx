@@ -15,9 +15,9 @@ const Register = () => {
 
   const checkPasswordStrength = (password) => {
     let strength = 0;
-    if (password.length >= 6) strength += 25;
     if (password.length >= 8) strength += 25;
-    if (/[A-Z]/.test(password)) strength += 25;
+    if (password.length >= 12) strength += 25;
+    if (/[A-Za-z]/.test(password)) strength += 25;
     if (/[0-9]/.test(password)) strength += 25;
     setPasswordStrength(strength);
   };
@@ -26,12 +26,12 @@ const Register = () => {
     setLoading(true);
     try {
       const response = await axios.post('http://localhost:8080/api/v1/auth/register', {
-        Username: values.username,
-        Email: values.email,
-        Password: values.password,
+        username: values.username,
+        email: values.email,
+        password: values.password,
       });
 
-      if (response.data.success) {
+      if (response.data.code === 200) {
         message.success('注册成功！请登录');
         navigate('/login');
       } else {
@@ -126,7 +126,11 @@ const Register = () => {
                     name="password"
                     rules={[
                       { required: true, message: '请输入密码!' },
-                      { min: 6, message: '密码至少6个字符!' }
+                      { min: 8, message: '密码至少8个字符!' },
+                      {
+                        pattern: /^(?=.*[A-Za-z])(?=.*\d)/,
+                        message: '密码必须包含至少一个字母和一个数字!'
+                      }
                     ]}
                   >
                     <Input.Password
