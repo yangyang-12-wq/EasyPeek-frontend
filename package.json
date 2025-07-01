@@ -7,10 +7,9 @@
     "dev": "vite",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "vite build",
+    "test": "vitest"
   },
   "dependencies": {
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
