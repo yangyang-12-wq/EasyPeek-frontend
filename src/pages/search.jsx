@@ -13,89 +13,129 @@ const SearchPage = () => {
   const [newsPerPage] = useState(6); // 每页显示6条新闻
   const navigate = useNavigate();
 
-  // 模拟搜索结果数据
-  const searchResults = [
-    {
-      id: 1,
-      title: "科技巨头AI竞赛白热化",
-      summary: "多家科技公司发布最新AI产品，市场竞争进入新阶段",
-      category: "科技",
-      timeline: "5个关键节点",
-      followers: 1234,
-      lastUpdate: "2小时前",
-      relevance: 95,
-    },
-    {
-      id: 2,
-      title: "人工智能在医疗领域的突破",
-      summary: "AI技术在疾病诊断和药物研发方面取得重大进展",
-      category: "医疗",
-      timeline: "3个关键节点",
-      followers: 856,
-      lastUpdate: "1天前",
-      relevance: 88,
-    },
-    {
-      id: 3,
-      title: "自动驾驶技术最新发展",
-      summary: "多家车企和科技公司在自动驾驶领域展开激烈竞争",
-      category: "汽车",
-      timeline: "7个关键节点",
-      followers: 1567,
-      lastUpdate: "3小时前",
-      relevance: 82,
-    },
-    {
-      id: 4,
-      title: "AI芯片技术突破",
-      summary: "新一代AI芯片性能大幅提升，功耗显著降低",
-      category: "科技",
-      timeline: "4个关键节点",
-      followers: 2341,
-      lastUpdate: "5小时前",
-      relevance: 78,
-    },
-    {
-      id: 5,
-      title: "人工智能教育应用",
-      summary: "AI技术在教育领域的创新应用，个性化学习成为可能",
-      category: "教育",
-      timeline: "6个关键节点",
-      followers: 987,
-      lastUpdate: "1天前",
-      relevance: 75,
-    },
-    {
-      id: 6,
-      title: "AI在金融科技中的应用",
-      summary: "人工智能技术推动金融行业数字化转型",
-      category: "经济",
-      timeline: "8个关键节点",
-      followers: 1456,
-      lastUpdate: "4小时前",
-      relevance: 72,
-    },
-    {
-      id: 7,
-      title: "人工智能伦理讨论",
-      summary: "社会各界对AI技术发展中的伦理问题展开深入讨论",
-      category: "社会",
-      timeline: "2个关键节点",
-      followers: 654,
-      lastUpdate: "2天前",
-      relevance: 68,
-    },
-    {
-      id: 8,
-      title: "AI在环保领域的应用",
-      summary: "人工智能技术助力环境保护和可持续发展",
-      category: "环境",
-      timeline: "5个关键节点",
-      followers: 789,
-      lastUpdate: "6小时前",
-      relevance: 65,
-    },
-  ];
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 获取新闻数据
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/v1/news');
+        const result = await response.json();
+        
+        if (result.code === 200 && result.data) {
+          // 转换数据格式以适配搜索页面
+          const transformedData = result.data.map(news => ({
+            id: news.id,
+            title: news.title,
+            summary: news.summary,
+            category: news.category,
+            timeline: `${Math.floor(Math.random() * 10) + 1}个关键节点`, // 模拟数据
+            followers: news.view_count || Math.floor(Math.random() * 2000) + 100,
+            lastUpdate: "2小时前", // 模拟数据
+            relevance: Math.floor(Math.random() * 30) + 70, // 模拟相关性分数
+            published_at: news.published_at,
+            source: news.source,
+            author: news.author,
+            image_url: news.image_url,
+            view_count: news.view_count,
+            like_count: news.like_count,
+            comment_count: news.comment_count,
+          }));
+          setSearchResults(transformedData);
+        }
+      } catch (err) {
+        console.error('获取新闻数据失败:', err);
+        // 如果API调用失败，使用默认数据
+        setSearchResults([
+          {
+            id: 1,
+            title: "科技巨头AI竞赛白热化",
+            summary: "多家科技公司发布最新AI产品，市场竞争进入新阶段",
+            category: "科技",
+            timeline: "5个关键节点",
+            followers: 1234,
+            lastUpdate: "2小时前",
+            relevance: 95,
+          },
+          {
+            id: 2,
+            title: "人工智能在医疗领域的突破",
+            summary: "AI技术在疾病诊断和药物研发方面取得重大进展",
+            category: "医疗",
+            timeline: "3个关键节点",
+            followers: 856,
+            lastUpdate: "1天前",
+            relevance: 88,
+          },
+          {
+            id: 3,
+            title: "自动驾驶技术最新发展",
+            summary: "多家车企和科技公司在自动驾驶领域展开激烈竞争",
+            category: "汽车",
+            timeline: "7个关键节点",
+            followers: 1567,
+            lastUpdate: "3小时前",
+            relevance: 82,
+          },
+          {
+            id: 4,
+            title: "AI芯片技术突破",
+            summary: "新一代AI芯片性能大幅提升，功耗显著降低",
+            category: "科技",
+            timeline: "4个关键节点",
+            followers: 2341,
+            lastUpdate: "5小时前",
+            relevance: 78,
+          },
+          {
+            id: 5,
+            title: "人工智能教育应用",
+            summary: "AI技术在教育领域的创新应用，个性化学习成为可能",
+            category: "教育",
+            timeline: "6个关键节点",
+            followers: 987,
+            lastUpdate: "1天前",
+            relevance: 75,
+          },
+          {
+            id: 6,
+            title: "AI在金融科技中的应用",
+            summary: "人工智能技术推动金融行业数字化转型",
+            category: "经济",
+            timeline: "8个关键节点",
+            followers: 1456,
+            lastUpdate: "4小时前",
+            relevance: 72,
+          },
+          {
+            id: 7,
+            title: "人工智能伦理讨论",
+            summary: "社会各界对AI技术发展中的伦理问题展开深入讨论",
+            category: "社会",
+            timeline: "2个关键节点",
+            followers: 654,
+            lastUpdate: "2天前",
+            relevance: 68,
+          },
+          {
+            id: 8,
+            title: "AI在环保领域的应用",
+            summary: "人工智能技术助力环境保护和可持续发展",
+            category: "环境",
+            timeline: "5个关键节点",
+            followers: 789,
+            lastUpdate: "6小时前",
+            relevance: 65,
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
 
   const hotKeywords = [
     "人工智能",
@@ -150,10 +190,13 @@ const SearchPage = () => {
         case 'relevance':
           return b.relevance - a.relevance;
         case 'time':
-          // 这里可以根据实际时间字段排序
+          // 根据发布时间排序
+          if (a.published_at && b.published_at) {
+            return new Date(b.published_at) - new Date(a.published_at);
+          }
           return 0;
         case 'popularity':
-          return b.followers - a.followers;
+          return (b.view_count || 0) - (a.view_count || 0);
         default:
           return b.relevance - a.relevance;
       }
@@ -342,41 +385,57 @@ const SearchPage = () => {
 
             {/* Search Results */}
             <div className="search-results">
-              {currentResults.map((result) => (
-                <div key={result.id} className="result-card" onClick={() => handleNewsClick(result.id)}>
-                  <div className="result-header">
-                    <div className="result-meta">
-                      <span className="result-category">{result.category}</span>
-                      <div className="result-relevance">相关度: {result.relevance}%</div>
-                    </div>
-                    <div className="result-time">{result.lastUpdate}</div>
-                  </div>
-
-                  <h3 className="result-title">{result.title}</h3>
-                  <p className="result-summary">{result.summary}</p>
-
-                  <div className="result-footer">
-                    <div className="result-stats">
-                      <div className="stat-item">
-                        <svg className="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {result.timeline}
-                      </div>
-                      <div className="stat-item">
-                        <svg className="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                        </svg>
-                        {result.followers} 关注
-                      </div>
-                    </div>
-
-                    <button className="view-detail-btn">
-                      查看详情
-                    </button>
-                  </div>
+              {loading ? (
+                <div className="loading-container">
+                  <div className="loading-spinner"></div>
+                  <p>正在加载搜索结果...</p>
                 </div>
-              ))}
+              ) : (
+                currentResults.map((result) => (
+                  <div key={result.id} className="result-card" onClick={() => handleNewsClick(result.id)}>
+                    <div className="result-header">
+                      <div className="result-meta">
+                        <span className="result-category">{result.category}</span>
+                        <div className="result-relevance">相关度: {result.relevance}%</div>
+                      </div>
+                      <div className="result-time">
+                        {result.published_at ? new Date(result.published_at).toLocaleDateString('zh-CN') : result.lastUpdate}
+                      </div>
+                    </div>
+
+                    <h3 className="result-title">{result.title}</h3>
+                    <p className="result-summary">{result.summary}</p>
+
+                    <div className="result-footer">
+                      <div className="result-stats">
+                        <div className="stat-item">
+                          <svg className="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          {result.view_count || 0} 阅读
+                        </div>
+                        <div className="stat-item">
+                          <svg className="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                          </svg>
+                          {result.like_count || 0} 点赞
+                        </div>
+                        <div className="stat-item">
+                          <svg className="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                          {result.comment_count || 0} 评论
+                        </div>
+                      </div>
+
+                      <button className="view-detail-btn">
+                        查看详情
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* 空状态显示 */}
