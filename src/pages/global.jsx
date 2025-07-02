@@ -23,16 +23,19 @@ const GlobalPage = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // 新闻分类数据
+  // 新闻分类数据 - 与convert_news.py保持一致
   const categories = [
     { id: "all", name: "全部", count: 1234, color: "bg-gray-100" },
-    { id: "tech", name: "科技", count: 456, color: "bg-blue-100" },
     { id: "politics", name: "政治", count: 234, color: "bg-red-100" },
     { id: "economy", name: "经济", count: 345, color: "bg-green-100" },
-    { id: "environment", name: "环境", count: 123, color: "bg-emerald-100" },
-    { id: "health", name: "医疗", count: 89, color: "bg-purple-100" },
-    { id: "education", name: "教育", count: 67, color: "bg-yellow-100" },
+    { id: "society", name: "社会", count: 289, color: "bg-indigo-100" },
+    { id: "tech", name: "科技", count: 456, color: "bg-blue-100" },
     { id: "sports", name: "体育", count: 156, color: "bg-orange-100" },
+    { id: "entertainment", name: "娱乐", count: 178, color: "bg-pink-100" },
+    { id: "international", name: "国际", count: 201, color: "bg-cyan-100" },
+    { id: "military", name: "军事", count: 134, color: "bg-slate-100" },
+    { id: "education", name: "教育", count: 67, color: "bg-yellow-100" },
+    { id: "health", name: "健康", count: 89, color: "bg-purple-100" },
   ];
 
   // 组件加载时获取新闻数据
@@ -61,13 +64,16 @@ const GlobalPage = () => {
       
       if (category !== 'all') {
         const categoryMap = {
-          'tech': '科技',
-          'politics': '政治', 
+          'politics': '政治',
           'economy': '经济',
-          'environment': '环境',
-          'health': '医疗',
+          'society': '社会',
+          'tech': '科技',
+          'sports': '体育',
+          'entertainment': '娱乐',
+          'international': '国际',
+          'military': '军事',
           'education': '教育',
-          'sports': '体育'
+          'health': '健康'
         };
         const categoryName = categoryMap[category];
         if (categoryName) {
@@ -159,13 +165,16 @@ const GlobalPage = () => {
     if (appliedFilters.category !== 'all') {
       filtered = filtered.filter(news => {
         const categoryMap = {
-          'tech': '科技',
           'politics': '政治',
           'economy': '经济',
-          'environment': '环境',
-          'health': '医疗',
+          'society': '社会',
+          'tech': '科技',
+          'sports': '体育',
+          'entertainment': '娱乐',
+          'international': '国际',
+          'military': '军事',
           'education': '教育',
-          'sports': '体育'
+          'health': '健康'
         };
         return news.category === categoryMap[appliedFilters.category];
       });
