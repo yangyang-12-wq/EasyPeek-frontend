@@ -1693,14 +1693,245 @@
   /* 响应式调整 */
   @media (max-width: 768px) {
     .news-filters {
-      padding: 12px;
-    }
-
-    .filter-buttons {
       flex-direction: column;
     }
-
+    
+    .filter-buttons {
+      flex-wrap: wrap;
+    }
+    
     .filter-btn {
+      flex: 1;
+      min-width: 120px;
+    }
+  }
+
+  /* 评论输入框样式 */
+  .comment-input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: flex-end;
+  }
+
+  .comment-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid rgba(79, 70, 229, 0.2);
+    border-radius: 12px;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    resize: vertical;
+    min-height: 44px;
+    max-height: 120px;
+  }
+
+  .comment-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+
+  .comment-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  body.dark .comment-input {
+    background: rgba(30, 30, 46, 0.9);
+    border-color: rgba(139, 92, 246, 0.2);
+    color: #f9fafb;
+  }
+
+  body.dark .comment-input:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  }
+
+  .comment-submit-btn {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    min-width: 60px;
+  }
+
+  .comment-submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  }
+
+  .comment-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  body.dark .comment-submit-btn {
+    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  }
+
+  body.dark .comment-submit-btn:hover:not(:disabled) {
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  }
+
+  /* 评论操作按钮样式 */
+  .comment-actions {
+    position: relative;
+    margin-left: auto;
+  }
+
+  .comment-action-dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .comment-action-dot:hover {
+    background: rgba(79, 70, 229, 0.1);
+    color: #4f46e5;
+  }
+
+  body.dark .comment-action-dot {
+    color: #9ca3af;
+  }
+
+  body.dark .comment-action-dot:hover {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+  }
+
+  .comment-delete-confirm {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 8px 0;
+    z-index: 1000;
+    min-width: 120px;
+    animation: fadeInUp 0.2s ease-out;
+  }
+
+  body.dark .comment-delete-confirm {
+    background: #1f2937;
+    border-color: #374151;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .comment-delete-btn,
+  .comment-cancel-btn {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    text-align: left;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+  }
+
+  .comment-delete-btn {
+    color: #dc2626;
+  }
+
+  .comment-delete-btn:hover {
+    background: rgba(220, 38, 38, 0.1);
+  }
+
+  .comment-cancel-btn {
+    color: #6b7280;
+  }
+
+  .comment-cancel-btn:hover {
+    background: rgba(107, 114, 128, 0.1);
+  }
+
+  body.dark .comment-delete-btn {
+    color: #f87171;
+  }
+
+  body.dark .comment-delete-btn:hover {
+    background: rgba(248, 113, 113, 0.1);
+  }
+
+  body.dark .comment-cancel-btn {
+    color: #9ca3af;
+  }
+
+  body.dark .comment-cancel-btn:hover {
+    background: rgba(156, 163, 175, 0.1);
+  }
+
+  /* 无评论状态样式 */
+  .no-comments {
+    text-align: center;
+    padding: 32px 16px;
+    color: #6b7280;
+  }
+
+  .no-comments p {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  body.dark .no-comments {
+    color: #9ca3af;
+  }
+
+  /* 评论加载状态样式 */
+  .comments-list .loading-container {
+    padding: 16px;
+    text-align: center;
+  }
+
+  .comments-list .loading-container p {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
+  }
+
+  body.dark .comments-list .loading-container p {
+    color: #9ca3af;
+  }
+
+  /* 响应式评论样式 */
+  @media (max-width: 768px) {
+    .comment-input-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .comment-submit-btn {
+      align-self: flex-end;
+      min-width: 80px;
+    }
+
+    .comment-actions {
+      margin-left: 8px;
+    }
+
+    .comment-delete-confirm {
       padding: 10px 16px;
     }
   }
