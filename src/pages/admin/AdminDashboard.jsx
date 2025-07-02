@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import AdminHeader from '../../components/admin/AdminHeader';
-import { getSystemStats, handleApiError } from '../../api/adminApi';
+import { getSystemStats } from '../../api/adminApi';
 import { message } from 'antd';
 import './Admin.css';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
     const { theme } = useTheme();
+    const navigate = useNavigate();
     const [stats, setStats] = useState({
         total_active_users: 0,
         total_deleted_users: 0,
@@ -27,23 +28,25 @@ const AdminDashboard = () => {
     }, []);
 
     const fetchStats = async () => {
+        setLoading(true);
         try {
-            setLoading(true);
             const response = await getSystemStats();
-
-            if (response.success && response.data) {
-                setStats(response.data);
+            if (response.data.code === 200 && response.data.data) {
+                setStats(response.data.data);
             } else {
-                throw new Error(response.message || '获取系统统计失败');
+                message.error(response.data.message || '获取系统统计失败');
             }
         } catch (error) {
             console.error('获取统计数据失败:', error);
-            const errorMessage = handleApiError(error);
-            message.error(errorMessage);
-
-            // 如果是认证错误，不显示错误消息，让handleApiError处理跳转
-            if (!errorMessage.includes('Authentication failed')) {
-                message.error('获取系统统计数据失败，请稍后重试');
+            if (error.response) {
+                if (error.response.status === 401) {
+                    message.error('认证已过期，请重新登录');
+                    navigate('/admin/login');
+                } else {
+                    message.error(error.response.data.message || '获取系统统计数据失败');
+                }
+            } else {
+                message.error('获取系统统计数据失败，请检查网络连接');
             }
         } finally {
             setLoading(false);
@@ -97,7 +100,7 @@ const AdminDashboard = () => {
                         <div className="stat-icon users">👥</div>
                         <div className="stat-info">
                             <div className="stat-value">
-                                {loading ? '-' : (stats.total_active_users || 0).toLocaleString()}
+                                {loading ? '-' : (stats.total_active_users || 0)}
                             </div>
                             <div className="stat-label">活跃用户</div>
                         </div>
@@ -117,7 +120,7 @@ const AdminDashboard = () => {
                         <div className="stat-icon news">📰</div>
                         <div className="stat-info">
                             <div className="stat-value">
-                                {loading ? '-' : (stats.active_news || 0).toLocaleString()}
+                                {loading ? '-' : (stats.active_news || 0)}
                             </div>
                             <div className="stat-label">活跃新闻</div>
                         </div>

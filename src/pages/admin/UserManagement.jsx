@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Input, Select, Button, Modal, Form, message, Space, Tag, Popconfirm } from 'antd';
 import { SearchOutlined, EditOutlined, DeleteOutlined, UserAddOutlined, ReloadOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../../components/admin/AdminHeader';
 import {
     getUsers,
     updateUser,
     deleteUser,
-    // createUser, // 后端未提供管理员创建用户接口
-    handleApiError
 } from '../../api/adminApi';
 import './Admin.css';
 import './UserManagement.css';
@@ -16,6 +15,7 @@ const { Search } = Input;
 const { Option } = Select;
 
 const UserManagement = () => {
+    const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
@@ -41,26 +41,30 @@ const UserManagement = () => {
         try {
             const params = {
                 page: pagination.current,
-                pageSize: pagination.pageSize, // 修正参数名，与后端保持一致
+                pageSize: pagination.pageSize,
                 ...filters
             };
-
             const response = await getUsers(params);
-
-            if (response.success && response.data && response.data.users) {
-                setUsers(response.data.users);
+            if (response.data.code === 200 && response.data.data) {
+                setUsers(response.data.data.users);
                 setPagination(prev => ({
                     ...prev,
-                    total: response.data.total || 0
+                    total: response.data.data.total || 0
                 }));
             } else {
-                throw new Error(response.message || '获取用户列表失败');
+                message.error(response.data.message || '获取用户列表失败');
             }
         } catch (error) {
             console.error('获取用户列表失败:', error);
-            const errorMessage = handleApiError(error);
-            if (!errorMessage.includes('Authentication failed')) {
-                message.error('获取用户列表失败，请稍后重试');
+            if (error.response) {
+                if (error.response.status === 401) {
+                    message.error('认证已过期，请重新登录');
+                    navigate('/admin/login');
+                } else {
+                    message.error(error.response.data.message || '获取用户列表失败');
+                }
+            } else {
+                message.error('获取用户列表失败，请检查网络连接');
             }
         } finally {
             setLoading(false);
@@ -81,46 +85,55 @@ const UserManagement = () => {
     const handleDelete = async (userId) => {
         try {
             const response = await deleteUser(userId);
-            if (response.success) {
+            if (response.data.code === 200) {
                 message.success('用户删除成功');
                 fetchUsers();
             } else {
-                throw new Error(response.message || '删除用户失败');
+                message.error(response.data.message || '删除用户失败');
             }
         } catch (error) {
             console.error('删除用户失败:', error);
-            const errorMessage = handleApiError(error);
-            if (!errorMessage.includes('Authentication failed')) {
-                message.error('删除用户失败，请稍后重试');
+            if (error.response) {
+                if (error.response.status === 401) {
+                    message.error('认证已过期，请重新登录');
+                    navigate('/admin/login');
+                } else {
+                    message.error(error.response.data.message || '删除用户失败');
+                }
+            } else {
+                message.error('删除用户失败，请检查网络连接');
             }
         }
     };
 
     const handleSave = async (values) => {
         try {
-            let response;
             if (editingUser) {
-                response = await updateUser(editingUser.id, values);
-
-                if (response.success) {
+                const response = await updateUser(editingUser.id, values);
+                if (response.data.code === 200) {
                     message.success('用户信息更新成功');
                     setEditModalVisible(false);
                     setEditingUser(null);
                     form.resetFields();
                     fetchUsers();
                 } else {
-                    throw new Error(response.message || '更新失败');
+                    message.error(response.data.message || '更新失败');
                 }
             } else {
                 // 后端未提供管理员创建用户接口
                 message.error('暂不支持创建用户功能，请联系系统管理员');
-                return;
             }
         } catch (error) {
             console.error('保存失败:', error);
-            const errorMessage = handleApiError(error);
-            if (!errorMessage.includes('Authentication failed')) {
-                message.error(errorMessage);
+            if (error.response) {
+                if (error.response.status === 401) {
+                    message.error('认证已过期，请重新登录');
+                    navigate('/admin/login');
+                } else {
+                    message.error(error.response.data.message || '保存用户失败');
+                }
+            } else {
+                message.error('保存用户失败，请检查网络连接');
             }
         }
     };
