@@ -47,8 +47,8 @@ const UserManagement = () => {
 
             const response = await getUsers(params);
 
-            if (response.success && response.data) {
-                setUsers(response.data.users || []);
+            if (response.success && response.data && response.data.users) {
+                setUsers(response.data.users);
                 setPagination(prev => ({
                     ...prev,
                     total: response.data.total || 0

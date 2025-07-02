@@ -39,13 +39,13 @@ const RSSManagement = () => {
         try {
             const params = {
                 page: pagination.current,
-                page_size: pagination.pageSize
+                pageSize: pagination.pageSize // 修正参数名，与 adminApi.js 保持一致
             };
 
             const response = await getRssSources(params);
 
-            if (response.success && response.data) {
-                setRssSources(response.data.rss_sources || []);
+            if (response.success && response.data && response.data.rss_sources) {
+                setRssSources(response.data.rss_sources);
                 setPagination(prev => ({
                     ...prev,
                     total: response.data.total || 0
