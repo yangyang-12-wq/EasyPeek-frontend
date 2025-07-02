@@ -320,18 +320,18 @@ body.dark .filter-select:hover {
   background-size: 16px;
 }
 
-/* 时间线容器 */
-.timeline-container {
+/* 故事列表容器 */
+.stories-container {
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
   padding: 40px 0;
 }
 
-/* 时间线主线 */
-.timeline-line {
+/* 垂直时间线 */
+.vertical-timeline-line {
   position: absolute;
-  left: 50%;
+  left: 30px;
   top: 0;
   bottom: 0;
   width: 4px;
@@ -339,40 +339,28 @@ body.dark .filter-select:hover {
     rgba(255, 255, 255, 0.8) 0%,
     rgba(255, 255, 255, 0.6) 50%,
     rgba(255, 255, 255, 0.8) 100%);
-  transform: translateX(-50%);
   border-radius: 2px;
 }
 
-body.dark .timeline-line {
+body.dark .vertical-timeline-line {
   background: linear-gradient(to bottom, 
     rgba(139, 92, 246, 0.8) 0%,
     rgba(59, 130, 246, 0.6) 50%,
     rgba(139, 92, 246, 0.8) 100%);
 }
 
-/* 时间线项目 */
-.timeline-item {
+/* 故事项目 */
+.story-item {
   position: relative;
-  margin-bottom: 80px;
+  margin-bottom: 40px;
+  padding-left: 80px;
   animation: fadeInUp 0.8s ease-out;
 }
 
-.timeline-item.left {
-  padding-right: calc(50% + 40px);
-}
-
-.timeline-item.right {
-  padding-left: calc(50% + 40px);
-}
-
-.timeline-item.right .story-card {
-  margin-left: 0;
-}
-
-/* 时间线标记 */
-.timeline-marker {
+/* 故事时间线标记 */
+.story-timeline-marker {
   position: absolute;
-  left: 50%;
+  left: 2px;
   top: 30px;
   width: 60px;
   height: 60px;
@@ -382,13 +370,12 @@ body.dark .timeline-line {
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: translateX(-50%);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
   border: 4px solid rgba(255, 255, 255, 0.3);
   z-index: 2;
 }
 
-body.dark .timeline-marker {
+body.dark .story-timeline-marker {
   background: rgba(30, 30, 46, 0.95);
   border-color: rgba(139, 92, 246, 0.5);
 }
@@ -397,8 +384,15 @@ body.dark .timeline-marker {
   font-size: 1.8rem;
 }
 
-/* 故事卡片 */
-.story-card {
+/* 故事卡片链接容器 */
+.story-card-horizontal-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* 水平故事卡片 */
+.story-card-horizontal {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -407,21 +401,44 @@ body.dark .timeline-marker {
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
   position: relative;
+  display: flex;
+  gap: 40px;
+  align-items: stretch;
+  cursor: pointer;
 }
 
-body.dark .story-card {
+body.dark .story-card-horizontal {
   background: rgba(30, 30, 46, 0.95);
   border-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
-.story-card:hover {
+.story-card-horizontal:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
-body.dark .story-card:hover {
+body.dark .story-card-horizontal:hover {
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* 左栏：故事内容 */
+.story-content-left {
+  flex: 2;
+  min-width: 0;
+}
+
+/* 右栏：时间线 */
+.story-timeline-right {
+  flex: 1;
+  min-width: 240px;
+  max-width: 320px;
+  padding: 0 0 0 32px;
+  border-left: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+body.dark .story-timeline-right {
+  border-left-color: rgba(139, 92, 246, 0.3);
 }
 
 /* 故事头部 */
@@ -486,21 +503,21 @@ body.dark .story-date {
   line-height: 1.3;
 }
 
-.story-title a {
+.story-title {
   color: #1f2937;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-body.dark .story-title a {
+body.dark .story-title {
   color: white;
 }
 
-.story-title a:hover {
+.story-card-horizontal:hover .story-title {
   color: #4f46e5;
 }
 
-body.dark .story-title a:hover {
+body.dark .story-card-horizontal:hover .story-title {
   color: #a78bfa;
 }
 
@@ -565,9 +582,9 @@ body.dark .story-tag {
 
 .story-preview-timeline h4 {
   color: #374151;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  margin: 0 0 16px 0;
+  margin: 0 0 20px 0;
 }
 
 body.dark .story-preview-timeline h4 {
@@ -577,27 +594,74 @@ body.dark .story-preview-timeline h4 {
 .mini-timeline {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  position: relative;
+}
+
+.mini-timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(to bottom, 
+    rgba(79, 70, 229, 0.6) 0%,
+    rgba(79, 70, 229, 0.3) 50%,
+    rgba(79, 70, 229, 0.6) 100%);
+}
+
+body.dark .mini-timeline::before {
+  background: linear-gradient(to bottom, 
+    rgba(139, 92, 246, 0.6) 0%,
+    rgba(139, 92, 246, 0.3) 50%,
+    rgba(139, 92, 246, 0.6) 100%);
 }
 
 .mini-timeline-item {
   display: flex;
-  gap: 16px;
-  align-items: center;
-  padding: 8px 0;
-  border-left: 3px solid rgba(79, 70, 229, 0.3);
-  padding-left: 16px;
+  gap: 12px;
+  align-items: flex-start;
+  position: relative;
 }
 
-body.dark .mini-timeline-item {
-  border-left-color: rgba(139, 92, 246, 0.5);
+.mini-timeline-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(79, 70, 229, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  flex-shrink: 0;
+  margin-top: 2px;
+  z-index: 1;
+}
+
+.mini-timeline-dot.current {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+}
+
+body.dark .mini-timeline-dot {
+  background: rgba(139, 92, 246, 0.8);
+  border-color: rgba(30, 30, 46, 0.9);
+}
+
+body.dark .mini-timeline-dot.current {
+  background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+}
+
+.mini-timeline-content {
+  flex: 1;
+  min-width: 0;
 }
 
 .mini-date {
   color: #6b7280;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  min-width: 80px;
+  display: block;
+  margin-bottom: 4px;
 }
 
 body.dark .mini-date {
@@ -606,8 +670,9 @@ body.dark .mini-date {
 
 .mini-event {
   color: #374151;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   line-height: 1.4;
+  display: block;
 }
 
 body.dark .mini-event {
@@ -625,29 +690,7 @@ body.dark .mini-timeline-more {
   color: #9ca3af;
 }
 
-/* 故事操作 */
-.story-actions {
-  display: flex;
-  justify-content: flex-end;
-}
 
-.view-story-btn {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  color: white;
-  padding: 12px 24px;
-  border-radius: 25px;
-  text-decoration: none;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.view-story-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
-}
 
 /* 无结果状态 */
 .no-results {
@@ -677,23 +720,17 @@ body.dark .mini-timeline-more {
     font-size: 1.1rem;
   }
   
-  .timeline-line {
-    left: 30px;
+  .vertical-timeline-line {
+    left: 20px;
   }
   
-  .timeline-item {
-    padding-left: 80px;
-    padding-right: 20px;
+  .story-item {
+    padding-left: 60px;
+    margin-bottom: 30px;
   }
   
-  .timeline-item.left,
-  .timeline-item.right {
-    padding-left: 80px;
-    padding-right: 20px;
-  }
-  
-  .timeline-marker {
-    left: 30px;
+  .story-timeline-marker {
+    left: -8px;
     width: 50px;
     height: 50px;
   }
@@ -702,12 +739,32 @@ body.dark .mini-timeline-more {
     font-size: 1.5rem;
   }
   
-  .story-card {
+  .story-card-horizontal {
+    flex-direction: column;
+    gap: 24px;
     padding: 24px;
+  }
+  
+  .story-timeline-right {
+    border-left: none;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 20px 0 0 0;
+    max-width: none;
+    min-width: auto;
+  }
+  
+  body.dark .story-timeline-right {
+    border-top-color: rgba(139, 92, 246, 0.3);
+    border-bottom-color: rgba(139, 92, 246, 0.3);
   }
   
   .story-title {
     font-size: 1.5rem;
+  }
+  
+  .mini-timeline {
+    gap: 12px;
   }
   
   .search-wrapper {
@@ -782,6 +839,25 @@ body.dark .mini-timeline-more {
     padding: 12px 16px;
   }
   
+  .story-item {
+    padding-left: 50px;
+  }
+  
+  .story-timeline-marker {
+    left: -12px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .timeline-icon {
+    font-size: 1.2rem;
+  }
+  
+  .story-card-horizontal {
+    padding: 20px;
+    gap: 16px;
+  }
+  
   .story-header {
     flex-direction: column;
     align-items: flex-start;
@@ -789,17 +865,31 @@ body.dark .mini-timeline-more {
   
   .story-meta {
     width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  .story-timeline-right {
+    padding: 16px 0 0 0;
   }
   
   .mini-timeline-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+    gap: 8px;
+  }
+  
+  .mini-timeline-content {
+    text-align: left;
   }
   
   .mini-date {
+    font-size: 0.75rem;
     min-width: auto;
   }
+  
+  .mini-event {
+    font-size: 0.8rem;
+  }
+  
+
 }
 
 /* 分页样式 */
