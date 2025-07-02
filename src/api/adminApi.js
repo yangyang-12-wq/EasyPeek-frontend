@@ -1,21 +1,12 @@
-// 管理员API调用工具
-// 已根据后端 admin_service.go 和 admin_handler.go 更新API接口
-// 主要修改：
-// 1. 统一参数映射：pageSize -> size
-// 2. 移除后端不存在的创建用户接口
-// 3. 统一用户更新接口，角色和状态更新通过通用更新接口实现
-// 4. 添加事件和新闻的过滤参数支持
-// 5. 修复登出API路径
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
+const API_BASE_URL = 'http://localhost:8080/api/v1';
 const ADMIN_API_BASE_URL = `${API_BASE_URL}/admin`;
 
-// 获取JWT Token
+// get JWT token from localStorage
 const getAuthToken = () => {
     return localStorage.getItem('admin_token');
 };
 
-// 设置请求头
+// set common headers for API requests
 const getAuthHeaders = () => {
     const token = getAuthToken();
     return {
@@ -24,7 +15,7 @@ const getAuthHeaders = () => {
     };
 };
 
-// 通用API请求函数
+// Helper function to make API requests
 const apiRequest = async (endpoint, options = {}) => {
     try {
         const url = `${ADMIN_API_BASE_URL}${endpoint}`;
@@ -46,6 +37,90 @@ const apiRequest = async (endpoint, options = {}) => {
         throw error;
     }
 };
+
+// ==================== 认证相关 ====================
+export const adminLogin = async (credentials) => {
+    try {
+        const Response = await fetch(`${API_BASE_URL}/auth/admin-login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(credentials)
+        });
+
+        const response = await Response.json();
+
+        if (!response.ok) {
+            throw new Error(response.error || response.message || 'Login failed');
+        }
+
+        // save token and user info to localStorage
+        if (response.data && response.data.token) {
+            localStorage.setItem('admin_token', response.data.token);
+            localStorage.setItem('admin_user', JSON.stringify(response.data.user));
+        }
+
+        return response;
+    } catch (error) {
+        console.error('Admin login failed:', error);
+        throw error;
+    }
+};
+
+export const adminLogout = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/admin-logout`, {
+            method: 'POST',
+            headers: getAuthHeaders()
+        });
+
+        if (!response.ok) {
+            console.warn('Logout API call failed with status:', response.status);
+        }
+    } catch (error) {
+        console.warn('Logout API call failed:', error);
+    } finally {
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_user');
+    }
+};
+
+export const checkAdminAuth = () => {
+    const token = getAuthToken();
+    const user = localStorage.getItem('admin_user');
+
+    if (!token || !user) {
+        return { isAuthenticated: false, user: null };
+    }
+
+    try {
+        const userData = JSON.parse(user);
+        // 检查用户角色是否为管理员
+        const isAdmin = userData.role === 'admin' || userData.role === 'system';
+
+        return {
+            isAuthenticated: isAdmin,
+            user: isAdmin ? userData : null
+        };
+    } catch (error) {
+        console.error('Error parsing user data:', error);
+        return { isAuthenticated: false, user: null };
+    }
+};
+
+export const getCurrentAdminUser = () => {
+    try {
+        const user = localStorage.getItem('admin_user');
+        return user ? JSON.parse(user) : null;
+    } catch (error) {
+        console.error('Error getting current admin user:', error);
+        return null;
+    }
+};
+
+
+
 
 // ==================== 系统统计 ====================
 export const getSystemStats = async () => {
@@ -243,90 +318,6 @@ export const getAllUsers = async (params = {}) => {
     return await getUsers(params);
 };
 
-// ==================== 认证相关 ====================
-export const adminLogin = async (credentials) => {
-    try {
-        // 这里应该调用真实的登录API
-        const response = await fetch(`${API_BASE_URL}/auth/admin/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(credentials)
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || data.message || 'Login failed');
-        }
-
-        // 保存Token
-        if (data.data && data.data.token) {
-            localStorage.setItem('admin_token', data.data.token);
-            localStorage.setItem('admin_user', JSON.stringify(data.data.user));
-        }
-
-        return data;
-    } catch (error) {
-        console.error('Admin login failed:', error);
-        throw error;
-    }
-};
-
-export const adminLogout = async () => {
-    try {
-        // 登出API不在admin路径下，直接使用基础API路径
-        const response = await fetch(`${API_BASE_URL}/auth/logout`, {
-            method: 'POST',
-            headers: getAuthHeaders()
-        });
-        
-        if (!response.ok) {
-            console.warn('Logout API call failed with status:', response.status);
-        }
-    } catch (error) {
-        console.warn('Logout API call failed:', error);
-    } finally {
-        // 无论API调用是否成功，都清除本地存储
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_user');
-    }
-};
-
-export const checkAdminAuth = () => {
-    const token = getAuthToken();
-    const user = localStorage.getItem('admin_user');
-
-    if (!token || !user) {
-        return { isAuthenticated: false, user: null };
-    }
-
-    try {
-        const userData = JSON.parse(user);
-        // 检查用户角色是否为管理员
-        const isAdmin = userData.role === 'admin' || userData.role === 'system';
-
-        return {
-            isAuthenticated: isAdmin,
-            user: isAdmin ? userData : null
-        };
-    } catch (error) {
-        console.error('Error parsing user data:', error);
-        return { isAuthenticated: false, user: null };
-    }
-};
-
-export const getCurrentAdminUser = () => {
-    try {
-        const user = localStorage.getItem('admin_user');
-        return user ? JSON.parse(user) : null;
-    } catch (error) {
-        console.error('Error getting current admin user:', error);
-        return null;
-    }
-};
-
 // ==================== 错误处理 ====================
 export const handleApiError = (error) => {
     console.error('API Error:', error);
@@ -357,7 +348,7 @@ export const handleApiError = (error) => {
 export default {
     // 系统统计
     getSystemStats,
-    
+
     // 用户管理
     getUsers,
     getAllUsers,
@@ -367,7 +358,7 @@ export default {
     deleteUser,
     updateUserRole,
     updateUserStatus,
-    
+
     // RSS源管理
     getRssSources,
     getAllRssSources,
@@ -376,25 +367,25 @@ export default {
     deleteRssSource,
     fetchRssSource,
     fetchAllRssSources,
-    
+
     // 事件管理
     getEvents,
     getAllEvents,
     updateEvent,
     deleteEvent,
-    
+
     // 新闻管理
     getNews,
     getAllNews,
     updateNews,
     deleteNews,
-    
+
     // 认证相关
     adminLogin,
     adminLogout,
     checkAdminAuth,
     getCurrentAdminUser,
-    
+
     // 错误处理
     handleApiError
 };
