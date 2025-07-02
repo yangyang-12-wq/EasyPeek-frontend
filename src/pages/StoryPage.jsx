@@ -130,7 +130,7 @@ export default function StoryPage() {
     }
   ];
 
-  const categories = ['all', '科技', '环境', '汽车', '科学', '经济', '体育'];
+  const categories = ['all', '科技', '环境', '汽车', '科学', '经济', '体育', '政治'];
   const categoryLabels = {
     'all': '全部',
     '科技': '科技',
@@ -138,7 +138,8 @@ export default function StoryPage() {
     '汽车': '汽车',
     '科学': '科学',
     '经济': '经济',
-    '体育': '体育'
+    '体育': '体育',
+    '政治': '政治'
   };
 
   // 过滤和排序故事
@@ -155,12 +156,6 @@ export default function StoryPage() {
           return new Date(b.lastUpdate) - new Date(a.lastUpdate);
         case 'oldest':
           return new Date(a.startDate) - new Date(b.startDate);
-        case 'newsCount':
-          return b.newsCount - a.newsCount;
-        case 'importance': {
-          const importanceOrder = { 'high': 3, 'medium': 2, 'low': 1 };
-          return importanceOrder[b.importance] - importanceOrder[a.importance];
-        }
         default:
           return 0;
       }
@@ -242,8 +237,6 @@ export default function StoryPage() {
               >
                 <option value="latest">最新更新</option>
                 <option value="oldest">最早开始</option>
-                <option value="newsCount">新闻数量</option>
-                <option value="importance">重要程度</option>
               </select>
             </div>
           </div>
