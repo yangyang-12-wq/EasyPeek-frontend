@@ -11,6 +11,7 @@ import {
     fetchAllRssSources,
     handleApiError
 } from '../../api/adminApi';
+import './Admin.css';
 import './RSSManagement.css';
 
 const { Search } = Input;
@@ -263,10 +264,10 @@ const RSSManagement = () => {
     ];
 
     return (
-        <div className="rss-management-container">
+        <div className="admin-container">
             <AdminHeader />
 
-            <div className="rss-management-content">
+            <div className="admin-content">
                 <div className="page-header">
                     <h1 className="page-title">RSS源管理</h1>
                     <p className="page-subtitle">管理新闻RSS源和抓取设置</p>

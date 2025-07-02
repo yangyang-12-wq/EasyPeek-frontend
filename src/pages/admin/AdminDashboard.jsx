@@ -4,6 +4,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import AdminHeader from '../../components/admin/AdminHeader';
 import { getSystemStats, handleApiError } from '../../api/adminApi';
 import { message } from 'antd';
+import './Admin.css';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -81,13 +82,13 @@ const AdminDashboard = () => {
     ];
 
     return (
-        <div className="admin-dashboard-container">
+        <div className="admin-container">
             <AdminHeader />
 
-            <div className="admin-dashboard-content">
-                <div className="dashboard-header">
-                    <h1 className="dashboard-title">管理员控制台</h1>
-                    <p className="dashboard-subtitle">系统总览和快速操作</p>
+            <div className="admin-content">
+                <div className="page-header">
+                    <h1 className="page-title">管理员控制台</h1>
+                    <p className="page-subtitle">系统总览和快速操作</p>
                 </div>
 
                 {/* 统计卡片 */}

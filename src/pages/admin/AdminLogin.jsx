@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import ThemeToggle from '../../components/ThemeToggle';
 import { adminLogin, handleApiError } from '../../api/adminApi';
+import './Admin.css';
 import './AdminLogin.css';
 
 const AdminLogin = () => {
@@ -42,10 +43,9 @@ const AdminLogin = () => {
     };
 
     return (
-        <div className="admin-login-container">
-            <div className="admin-login-background"></div>
+        <div className="admin-container">
 
-            <div className="admin-login-content">
+            <div className="admin-content">
                 <div className="login-header">
                     <div className="back-button">
                         <Button

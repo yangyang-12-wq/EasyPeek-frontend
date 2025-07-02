@@ -9,6 +9,7 @@ import {
     // createUser, // 后端未提供管理员创建用户接口
     handleApiError
 } from '../../api/adminApi';
+import './Admin.css';
 import './UserManagement.css';
 
 const { Search } = Input;
@@ -252,10 +253,10 @@ const UserManagement = () => {
     ];
 
     return (
-        <div className="user-management-container">
+        <div className="admin-container">
             <AdminHeader />
 
-            <div className="user-management-content">
+            <div className="admin-content">
                 <div className="page-header">
                     <h1 className="page-title">用户管理</h1>
                     <p className="page-subtitle">管理系统用户和权限设置</p>
