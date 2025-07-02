@@ -51,7 +51,7 @@ export const adminLogin = async (credentials) => {
 
         const response = await Response.json();
 
-        if (!response.ok) {
+        if (response.code != 200) {
             throw new Error(response.error || response.message || 'Login failed');
         }
 
