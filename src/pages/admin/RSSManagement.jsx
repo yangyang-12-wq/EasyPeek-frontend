@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Input, Button, Modal, Form, message, Space, Tag, Popconfirm, Switch } from 'antd';
 import { SearchOutlined, EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined, SyncOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../../components/admin/AdminHeader';
 import {
     getRssSources,
@@ -9,14 +10,15 @@ import {
     deleteRssSource,
     fetchRssSource,
     fetchAllRssSources,
-    handleApiError
 } from '../../api/adminApi';
+import './Admin.css';
 import './RSSManagement.css';
 
 const { Search } = Input;
 const { TextArea } = Input;
 
 const RSSManagement = () => {
+    const navigate = useNavigate();
     const [rssSources, setRssSources] = useState([]);
     const [loading, setLoading] = useState(false);
     const [fetchingLoading, setFetchingLoading] = useState({});
@@ -38,25 +40,29 @@ const RSSManagement = () => {
         try {
             const params = {
                 page: pagination.current,
-                page_size: pagination.pageSize
+                pageSize: pagination.pageSize
             };
-
             const response = await getRssSources(params);
-
-            if (response.success && response.data) {
-                setRssSources(response.data.rss_sources || []);
+            if (response.data.code === 200 && response.data.data) {
+                setRssSources(response.data.data.rss_sources);
                 setPagination(prev => ({
                     ...prev,
-                    total: response.data.total || 0
+                    total: response.data.data.total || 0
                 }));
             } else {
-                throw new Error(response.message || '获取RSS源列表失败');
+                message.error(response.data.message || '获取RSS源列表失败');
             }
         } catch (error) {
             console.error('获取RSS源列表失败:', error);
-            const errorMessage = handleApiError(error);
-            if (!errorMessage.includes('Authentication failed')) {
-                message.error('获取RSS源列表失败，请稍后重试');
+            if (error.response) {
+                if (error.response.status === 401) {
+                    message.error('认证已过期，请重新登录');
+                    navigate('/admin/login');
+                } else {
+                    message.error(error.response.data.message || '获取RSS源列表失败');
+                }
+            } else {
+                message.error('获取RSS源列表失败，请检查网络连接');
             }
         } finally {
             setLoading(false);
@@ -79,44 +85,53 @@ const RSSManagement = () => {
     const handleDelete = async (sourceId) => {
         try {
             const response = await deleteRssSource(sourceId);
-            if (response.success) {
+            if (response.data.code === 200) {
                 message.success('RSS源删除成功');
                 fetchRssSources();
             } else {
-                throw new Error(response.message || '删除RSS源失败');
+                message.error(response.data.message || '删除RSS源失败');
             }
         } catch (error) {
             console.error('删除RSS源失败:', error);
-            const errorMessage = handleApiError(error);
-            if (!errorMessage.includes('Authentication failed')) {
-                message.error('删除RSS源失败，请稍后重试');
+            if (error.response) {
+                if (error.response.status === 401) {
+                    message.error('认证已过期，请重新登录');
+                    navigate('/admin/login');
+                } else {
+                    message.error(error.response.data.message || '删除RSS源失败');
+                }
+            } else {
+                message.error('删除RSS源失败，请检查网络连接');
             }
         }
     };
 
     const handleSave = async (values) => {
         try {
-            let response;
-            if (editingSource) {
-                response = await updateRssSource(editingSource.id, values);
-            } else {
-                response = await createRssSource(values);
-            }
+            const response = editingSource
+                ? await updateRssSource(editingSource.id, values)
+                : await createRssSource(values);
 
-            if (response.success) {
+            if (response.data.code === 200) {
                 message.success(editingSource ? 'RSS源更新成功' : 'RSS源创建成功');
                 setEditModalVisible(false);
                 setEditingSource(null);
                 form.resetFields();
                 fetchRssSources();
             } else {
-                throw new Error(response.message || '保存失败');
+                message.error(response.data.message || '保存失败');
             }
         } catch (error) {
             console.error('保存失败:', error);
-            const errorMessage = handleApiError(error);
-            if (!errorMessage.includes('Authentication failed')) {
-                message.error(errorMessage);
+            if (error.response) {
+                if (error.response.status === 401) {
+                    message.error('认证已过期，请重新登录');
+                    navigate('/admin/login');
+                } else {
+                    message.error(error.response.data.message || '保存RSS源失败');
+                }
+            } else {
+                message.error('保存RSS源失败，请检查网络连接');
             }
         }
     };
@@ -125,17 +140,23 @@ const RSSManagement = () => {
         setFetchingLoading(prev => ({ ...prev, [sourceId]: true }));
         try {
             const response = await fetchRssSource(sourceId);
-            if (response.success) {
-                message.success('RSS源抓取成功');
-                fetchRssSources(); // 刷新列表更新最后抓取时间
+            if (response.data.code === 200) {
+                message.success(response.data.message || 'RSS源抓取任务已开始');
+                fetchRssSources(); // Refresh list to show updated status
             } else {
-                throw new Error(response.message || 'RSS源抓取失败');
+                message.error(response.data.message || 'RSS源抓取失败');
             }
         } catch (error) {
             console.error('RSS源抓取失败:', error);
-            const errorMessage = handleApiError(error);
-            if (!errorMessage.includes('Authentication failed')) {
-                message.error(errorMessage);
+            if (error.response) {
+                if (error.response.status === 401) {
+                    message.error('认证已过期，请重新登录');
+                    navigate('/admin/login');
+                } else {
+                    message.error(error.response.data.message || 'RSS源抓取失败');
+                }
+            } else {
+                message.error('RSS源抓取失败，请检查网络连接');
             }
         } finally {
             setFetchingLoading(prev => ({ ...prev, [sourceId]: false }));
@@ -146,17 +167,23 @@ const RSSManagement = () => {
         setLoading(true);
         try {
             const response = await fetchAllRssSources();
-            if (response.success) {
-                message.success('所有RSS源抓取完成');
-                fetchRssSources(); // 刷新列表
+            if (response.data.code === 200) {
+                message.success(response.data.message || '所有RSS源的抓取任务已开始');
+                fetchRssSources(); // Refresh list
             } else {
-                throw new Error(response.message || '批量抓取失败');
+                message.error(response.data.message || '批量抓取失败');
             }
         } catch (error) {
             console.error('批量抓取失败:', error);
-            const errorMessage = handleApiError(error);
-            if (!errorMessage.includes('Authentication failed')) {
-                message.error(errorMessage);
+            if (error.response) {
+                if (error.response.status === 401) {
+                    message.error('认证已过期，请重新登录');
+                    navigate('/admin/login');
+                } else {
+                    message.error(error.response.data.message || '批量抓取失败');
+                }
+            } else {
+                message.error('批量抓取失败，请检查网络连接');
             }
         } finally {
             setLoading(false);
@@ -263,10 +290,10 @@ const RSSManagement = () => {
     ];
 
     return (
-        <div className="rss-management-container">
+        <div className="admin-container">
             <AdminHeader />
 
-            <div className="rss-management-content">
+            <div className="admin-content">
                 <div className="page-header">
                     <h1 className="page-title">RSS源管理</h1>
                     <p className="page-subtitle">管理新闻RSS源和抓取设置</p>

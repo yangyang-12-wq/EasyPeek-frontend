@@ -4,8 +4,11 @@ import { UserOutlined, LockOutlined, CrownOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import ThemeToggle from '../../components/ThemeToggle';
-import { adminLogin, handleApiError } from '../../api/adminApi';
+import { adminLogin } from '../../api/adminApi';
+import './Admin.css';
 import './AdminLogin.css';
+
+
 
 const AdminLogin = () => {
     const [loading, setLoading] = useState(false);
@@ -17,21 +20,15 @@ const AdminLogin = () => {
         try {
             const response = await adminLogin(values);
 
-            if (response.success) {
-                message.success('登录成功！');
+            if (response.code === 200) {
+                message.success('Login successful!');
                 navigate('/admin');
             } else {
-                throw new Error(response.message || '登录失败');
+                console.warn('Login failed:', response.data.message);
+                message.error(response.data.message || 'Login failed');
             }
         } catch (error) {
-            console.error('Login failed:', error);
-            const errorMessage = handleApiError(error);
-            // 不显示"Authentication failed"消息，因为这是登录页面
-            if (!errorMessage.includes('Authentication failed')) {
-                message.error(errorMessage);
-            } else {
-                message.error('用户名或密码错误');
-            }
+            console.error('Login error:', error);
         } finally {
             setLoading(false);
         }
@@ -42,10 +39,9 @@ const AdminLogin = () => {
     };
 
     return (
-        <div className="admin-login-container">
-            <div className="admin-login-background"></div>
+        <div className="admin-container">
 
-            <div className="admin-login-content">
+            <div className="admin-content">
                 <div className="login-header">
                     <div className="back-button">
                         <Button
@@ -53,7 +49,7 @@ const AdminLogin = () => {
                             onClick={handleBackToSite}
                             className="back-btn"
                         >
-                            ← 返回主站
+                            ←  返回主站
                         </Button>
                     </div>
                     <div className="theme-toggle-wrapper">
@@ -116,13 +112,6 @@ const AdminLogin = () => {
                                 </Button>
                             </Form.Item>
                         </Form>
-
-                        <div className="login-footer">
-                            <div className="demo-info">
-                                <p>请使用您的管理员账号登录</p>
-                                <p>如需帮助，请联系系统管理员</p>
-                            </div>
-                        </div>
                     </Card>
                 </div>
             </div>
