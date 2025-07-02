@@ -9,14 +9,10 @@ const GlobalPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('latest');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [importanceFilter, setImportanceFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [appliedFilters, setAppliedFilters] = useState({
     category: 'all',
     sortBy: 'latest',
-    status: 'all',
-    importance: 'all',
     search: ''
   });
   const [isFilterChanged, setIsFilterChanged] = useState(false);
@@ -41,48 +37,27 @@ const GlobalPage = () => {
 
   // 组件加载时获取新闻数据
   useEffect(() => {
-    fetchGlobalNews();
+    fetchNewsByCategory('all', 'latest');
   }, []);
 
-  // 当分类改变时重新获取数据
+  // 当分类或排序改变时重新获取数据
   useEffect(() => {
-    if (selectedCategory === 'all') {
-      fetchGlobalNews();
+    if (appliedFilters.category === 'all') {
+      fetchNewsByCategory('all', appliedFilters.sortBy);
     } else {
-      fetchNewsByCategory(selectedCategory);
+      fetchNewsByCategory(appliedFilters.category, appliedFilters.sortBy);
     }
-  }, [selectedCategory]);
+  }, [appliedFilters.category, appliedFilters.sortBy]);
 
-  // 从后端API获取新闻数据
-  const fetchGlobalNews = async () => {
+
+
+  // 根据分类和排序获取新闻数据
+  const fetchNewsByCategory = async (category, sort = 'latest') => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:8080/api/v1/news/latest?limit=50');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const result = await response.json();
-      if (result.code === 200 && result.data) {
-        setGlobalNewsData(result.data);
-        setError(null);
-      } else {
-        throw new Error(result.message || '获取新闻数据失败');
-      }
-    } catch (error) {
-      console.error('获取新闻数据失败:', error);
-      setError('获取新闻数据失败，请稍后重试');
-      setGlobalNewsData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 根据分类获取新闻数据
-  const fetchNewsByCategory = async (category) => {
-    try {
-      setLoading(true);
-      let url = 'http://localhost:8080/api/v1/news/latest?limit=50';
+      let url = '';
+      let queryParams = new URLSearchParams();
+      queryParams.append('limit', '50');
       
       if (category !== 'all') {
         const categoryMap = {
@@ -96,11 +71,19 @@ const GlobalPage = () => {
         };
         const categoryName = categoryMap[category];
         if (categoryName) {
-          url = `http://localhost:8080/api/v1/news/category/${encodeURIComponent(categoryName)}?limit=50`;
+          url = `http://localhost:8080/api/v1/news/category/${encodeURIComponent(categoryName)}`;
+          queryParams.append('sort', sort);
+        }
+      } else {
+        // 全部分类时根据排序方式选择不同端点
+        if (sort === 'hot') {
+          url = 'http://localhost:8080/api/v1/news/hot';
+        } else {
+          url = 'http://localhost:8080/api/v1/news/latest';
         }
       }
       
-      const response = await fetch(url);
+      const response = await fetch(`${url}?${queryParams.toString()}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -141,18 +124,13 @@ const GlobalPage = () => {
     navigate('/search');
   };
 
-  // 处理筛选变化
-  const handleFilterChange = () => {
-    setIsFilterChanged(true);
-  };
+
 
   // 应用筛选
   const applyFilters = () => {
     setAppliedFilters({
       category: selectedCategory,
       sortBy: sortBy,
-      status: statusFilter,
-      importance: importanceFilter,
       search: searchQuery
     });
     setIsFilterChanged(false);
@@ -163,14 +141,10 @@ const GlobalPage = () => {
   const resetFilters = () => {
     setSelectedCategory('all');
     setSortBy('latest');
-    setStatusFilter('all');
-    setImportanceFilter('all');
     setSearchQuery('');
     setAppliedFilters({
       category: 'all',
       sortBy: 'latest',
-      status: 'all',
-      importance: 'all',
       search: ''
     });
     setIsFilterChanged(false);
@@ -205,16 +179,6 @@ const GlobalPage = () => {
       );
     }
 
-    // 按状态筛选（这里可以根据实际需求调整）
-    if (appliedFilters.status !== 'all') {
-      // 暂时跳过状态筛选，因为数据中没有状态字段
-    }
-
-    // 按重要程度筛选（这里可以根据实际需求调整）
-    if (appliedFilters.importance !== 'all') {
-      // 暂时跳过重要程度筛选，因为数据中没有重要程度字段
-    }
-
     // 排序
     filtered.sort((a, b) => {
       const dateA = new Date(a.published_at);
@@ -223,15 +187,12 @@ const GlobalPage = () => {
       switch (appliedFilters.sortBy) {
         case 'latest':
           return dateB - dateA;
-        case 'popular':
-          // 暂时按时间排序，实际可以根据浏览量等字段排序
-          return dateB - dateA;
-        case 'trending':
-          // 暂时按时间排序，实际可以根据趋势指标排序
-          return dateB - dateA;
-        case 'timeline':
-          // 暂时按时间排序，实际可以根据时间线长度排序
-          return dateB - dateA;
+        case 'hot':
+          // 按热度排序，可以基于浏览量、点赞数等指标
+          // 这里暂时按创建时间排序，实际项目中可以根据 view_count, like_count 等字段排序
+          const hotScoreA = (a.view_count || 0) + (a.like_count || 0) + (a.comment_count || 0);
+          const hotScoreB = (b.view_count || 0) + (b.like_count || 0) + (b.comment_count || 0);
+          return hotScoreB - hotScoreA || dateB - dateA; // 热度相同时按时间排序
         default:
           return dateB - dateA;
       }
@@ -260,6 +221,16 @@ const GlobalPage = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [appliedFilters]);
+
+  // 监听筛选条件变化，自动更新isFilterChanged状态
+  useEffect(() => {
+    const hasChanged = 
+      selectedCategory !== appliedFilters.category ||
+      sortBy !== appliedFilters.sortBy ||
+      searchQuery !== appliedFilters.search;
+    
+    setIsFilterChanged(hasChanged);
+  }, [selectedCategory, sortBy, searchQuery, appliedFilters]);
 
   // 渲染网格视图 - 复用HomePage.jsx的新闻卡片样式
   const renderGridView = () => (
@@ -411,7 +382,6 @@ const GlobalPage = () => {
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
-                    handleFilterChange();
                   }}
                   className="search-input"
                 />
@@ -443,7 +413,6 @@ const GlobalPage = () => {
                       className={`category-item ${selectedCategory === category.id ? 'active' : ''}`}
                       onClick={() => {
                         setSelectedCategory(category.id);
-                        handleFilterChange();
                       }}
                     >
                       <div className="category-info">
@@ -458,56 +427,19 @@ const GlobalPage = () => {
 
               {/* 筛选选项部分 */}
               <div className="filter-section">
-                <label className="section-label">筛选选项</label>
+                <label className="section-label">排序方式</label>
                 <div className="filter-options">
                   <div className="filter-item">
-                    <label className="filter-label">排序方式</label>
+                    <label className="filter-label">选择排序</label>
                     <select
                       className="filter-select"
                       value={sortBy}
                       onChange={(e) => {
                         setSortBy(e.target.value);
-                        handleFilterChange();
                       }}
                     >
                       <option value="latest">最新发布</option>
-                      <option value="popular">最受欢迎</option>
-                      <option value="trending">热度趋势</option>
-                      <option value="timeline">时间线长度</option>
-                    </select>
-                  </div>
-
-                  <div className="filter-item">
-                    <label className="filter-label">事件状态</label>
-                    <select
-                      className="filter-select"
-                      value={statusFilter}
-                      onChange={(e) => {
-                        setStatusFilter(e.target.value);
-                        handleFilterChange();
-                      }}
-                    >
-                      <option value="all">全部状态</option>
-                      <option value="ongoing">进行中</option>
-                      <option value="completed">已完结</option>
-                      <option value="breaking">突发事件</option>
-                    </select>
-                  </div>
-
-                  <div className="filter-item">
-                    <label className="filter-label">重要程度</label>
-                    <select
-                      className="filter-select"
-                      value={importanceFilter}
-                      onChange={(e) => {
-                        setImportanceFilter(e.target.value);
-                        handleFilterChange();
-                      }}
-                    >
-                      <option value="all">全部</option>
-                      <option value="high">重要</option>
-                      <option value="medium">一般</option>
-                      <option value="low">普通</option>
+                      <option value="hot">热度最高</option>
                     </select>
                   </div>
                 </div>
@@ -530,7 +462,7 @@ const GlobalPage = () => {
                 </div>
 
                 {/* 当前筛选状态显示 */}
-                {Object.values(appliedFilters).some(filter => filter !== 'all' && filter !== '') && (
+                {Object.values(appliedFilters).some(filter => filter !== 'all' && filter !== '' && filter !== 'latest') && (
                   <div className="current-filters">
                     <h4 className="current-filters-title">当前筛选：</h4>
                     <div className="filter-tags">
@@ -541,20 +473,7 @@ const GlobalPage = () => {
                       )}
                       {appliedFilters.sortBy !== 'latest' && (
                         <span className="filter-tag">
-                          排序: {appliedFilters.sortBy === 'popular' ? '最受欢迎' : 
-                                  appliedFilters.sortBy === 'trending' ? '热度趋势' : '时间线长度'}
-                        </span>
-                      )}
-                      {appliedFilters.status !== 'all' && (
-                        <span className="filter-tag">
-                          状态: {appliedFilters.status === 'ongoing' ? '进行中' : 
-                                  appliedFilters.status === 'completed' ? '已完结' : '突发事件'}
-                        </span>
-                      )}
-                      {appliedFilters.importance !== 'all' && (
-                        <span className="filter-tag">
-                          重要: {appliedFilters.importance === 'high' ? '重要' : 
-                                  appliedFilters.importance === 'medium' ? '一般' : '普通'}
+                          排序: {appliedFilters.sortBy === 'hot' ? '热度最高' : '最新发布'}
                         </span>
                       )}
                       {appliedFilters.search && (
@@ -612,10 +531,10 @@ const GlobalPage = () => {
                   <button 
                     className="retry-button"
                     onClick={() => {
-                      if (selectedCategory === 'all') {
-                        fetchGlobalNews();
+                      if (appliedFilters.category === 'all') {
+                        fetchNewsByCategory('all', appliedFilters.sortBy);
                       } else {
-                        fetchNewsByCategory(selectedCategory);
+                        fetchNewsByCategory(appliedFilters.category, appliedFilters.sortBy);
                       }
                     }}
                   >
