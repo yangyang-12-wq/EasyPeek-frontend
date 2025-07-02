@@ -181,7 +181,7 @@ body.dark .categories-section .categories-list {
   padding: 10px 36px 10px 12px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);
   color: #1f2937;
   font-size: 14px;
   transition: all 0.3s ease;
@@ -196,7 +196,7 @@ body.dark .categories-section .categories-list {
 
 body.dark .filter-section .filter-select {
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(45, 45, 65, 0.9);
+  background-color: rgba(45, 45, 65, 0.9);
   color: #f9fafb;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
@@ -208,7 +208,7 @@ body.dark .filter-section .filter-select {
   outline: none;
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
   border-color: #4f46e5;
-  background: rgba(255, 255, 255, 1);
+  background-color: rgba(255, 255, 255, 1);
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 10px center;
@@ -218,7 +218,7 @@ body.dark .filter-section .filter-select {
 body.dark .filter-section .filter-select:focus {
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
   border-color: #8b5cf6;
-  background: rgba(55, 55, 75, 1);
+  background-color: rgba(55, 55, 75, 1);
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 10px center;
@@ -296,7 +296,7 @@ body.dark .filter-section .reset-filter-btn:hover {
   padding: 8px 36px 8px 12px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);
   font-size: 14px;
   transition: all 0.3s ease;
   appearance: none;
@@ -309,7 +309,7 @@ body.dark .filter-section .reset-filter-btn:hover {
 }
 
 body.dark .filter-select {
-  background: rgba(45, 45, 65, 0.9);
+  background-color: rgba(45, 45, 65, 0.9);
   border: 1px solid rgba(75, 85, 99, 0.3);
   color: #f9fafb;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -876,7 +876,7 @@ body.dark .timeline-sort-label {
   padding: 10px 36px 10px 16px;
   border: none;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);
   color: #1f2937;
   font-size: 14px;
   font-weight: 500;
@@ -894,7 +894,7 @@ body.dark .timeline-sort-label {
 }
 
 body.dark .timeline-sort-select {
-  background: rgba(45, 45, 65, 0.9);
+  background-color: rgba(45, 45, 65, 0.9);
   color: #f9fafb;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -906,7 +906,7 @@ body.dark .timeline-sort-select {
 .timeline-sort-select:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 1);
+  background-color: rgba(255, 255, 255, 1);
   transform: translateY(-1px);
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
@@ -916,7 +916,7 @@ body.dark .timeline-sort-select {
 
 body.dark .timeline-sort-select:focus {
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
-  background: rgba(55, 55, 75, 1);
+  background-color: rgba(55, 55, 75, 1);
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 10px center;
@@ -924,7 +924,7 @@ body.dark .timeline-sort-select:focus {
 }
 
 .timeline-sort-select:hover {
-  background: rgba(255, 255, 255, 1);
+  background-color: rgba(255, 255, 255, 1);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -934,7 +934,7 @@ body.dark .timeline-sort-select:focus {
 }
 
 body.dark .timeline-sort-select:hover {
-  background: rgba(55, 55, 75, 1);
+  background-color: rgba(55, 55, 75, 1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
