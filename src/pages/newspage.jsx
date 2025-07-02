@@ -17,6 +17,17 @@ export default function NewsPage() {
   const [sortBy, setSortBy] = useState('latest'); // 'latest' 或 'hot'
   const [allCategories, setAllCategories] = useState([]);
 
+  // 评论相关状态
+  const [comments, setComments] = useState([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentsPage, setCommentsPage] = useState(1);
+  const [commentsTotal, setCommentsTotal] = useState(0);
+  const COMMENTS_PAGE_SIZE = 5;
+  const [commentInput, setCommentInput] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // 格式化新闻数据，处理字段映射
   const formatNewsData = (rawData) => {
@@ -44,7 +55,19 @@ export default function NewsPage() {
     }));
   };
 
- 
+  // 获取当前用户ID
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch("http://localhost:8080/api/v1/user/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.code === 200 && res.data) setCurrentUserId(res.data.id);
+        });
+    }
+  }, []);
 
   // 获取分类列表
   const fetchCategories = async () => {
@@ -183,6 +206,106 @@ export default function NewsPage() {
       return [];
     }
   };
+
+  // 格式化评论数据
+  const formatComments = (commentsList) => {
+    return commentsList.map(comment => ({
+      ...comment,
+      created_at: comment.created_at ? new Date(comment.created_at).toLocaleString('zh-CN') : ''
+    }));
+  };
+
+  // 获取新闻评论，支持分页和追加
+  const fetchComments = async (newsId, page = 1, append = false) => {
+    setCommentsLoading(true);
+    try {
+      const url = `http://localhost:8080/api/v1/comments/news/${newsId}?page=${page}&size=${COMMENTS_PAGE_SIZE}`;
+      const response = await fetch(url);
+      const result = await response.json();
+      if (result.code === 200 && Array.isArray(result.data)) {
+        const formattedComments = formatComments(result.data);
+        setCommentsTotal(result.total || 0);
+        if (append) {
+          setComments(prev => [...prev, ...formattedComments]);
+        } else {
+          setComments(formattedComments);
+        }
+      } else {
+        setComments([]);
+        setCommentsTotal(0);
+      }
+    } catch (e) {
+      setComments([]);
+      setCommentsTotal(0);
+    } finally {
+      setCommentsLoading(false);
+    }
+  };
+
+  // 发表评论
+  const handleSubmitComment = async () => {
+    if (!commentInput.trim()) return;
+    setSubmitting(true);
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch('http://localhost:8080/api/v1/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ news_id: Number(id), content: commentInput.trim() })
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        setCommentInput('');
+        setComments([]);
+        setCommentsPage(1);
+        fetchComments(id, 1, false);
+      } else {
+        alert(result.message || '评论失败');
+      }
+    } catch (e) {
+      alert('评论失败');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // 删除评论
+  const handleDeleteComment = async (commentId) => {
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`http://localhost:8080/api/v1/comments/${commentId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        setComments([]);
+        setCommentsPage(1);
+        fetchComments(id, 1, false);
+      } else {
+        alert(result.message || '删除失败');
+      }
+    } catch (e) {
+      alert('删除失败');
+    }
+  };
+
+  // 加载更多评论
+  const handleLoadMoreComments = () => {
+    const nextPage = commentsPage + 1;
+    setCommentsPage(nextPage);
+    fetchComments(id, nextPage, true);
+  };
+
+  // 首次加载和切换新闻时，重置评论
+  useEffect(() => {
+    setComments([]);
+    setCommentsPage(1);
+    fetchComments(id, 1, false);
+  }, [id]);
 
   // 加载状态
   if (loading) {
@@ -518,30 +641,75 @@ export default function NewsPage() {
 
             {/* 热门评论 */}
             <div className="sidebar-card">
-              <h3 className="card-title">💬 热门评论 ({newsData.comment_count || 0})</h3>
-              <div className="comments-list">
-                <div className="comment-item">
-                  <div className="comment-avatar">用</div>
-                  <div className="comment-content">
-                    <div className="comment-author">用户123</div>
-                    <div className="comment-text">这是一条很有价值的新闻</div>
-                    <div className="comment-time">2小时前</div>
-                  </div>
-                </div>
-                
-                <div className="comment-item">
-                  <div className="comment-avatar">观</div>
-                  <div className="comment-content">
-                    <div className="comment-author">观察者</div>
-                    <div className="comment-text">值得关注的发展趋势</div>
-                    <div className="comment-time">3小时前</div>
-                  </div>
-                </div>
+              <h3 className="card-title">💬 热门评论 ({commentsTotal})</h3>
+              {/* 评论输入框 */}
+              <div className="comment-input-row">
+                <input
+                  className="comment-input"
+                  placeholder="哎呦，不错哦，发条评论吧"
+                  value={commentInput}
+                  onChange={e => setCommentInput(e.target.value)}
+                  maxLength={1000}
+                  disabled={submitting}
+                />
+                <button
+                  className="comment-submit-btn"
+                  onClick={handleSubmitComment}
+                  disabled={submitting || !commentInput.trim()}
+                >
+                  发布
+                </button>
               </div>
-              
-              <button className="view-all-comments-btn">
-                查看全部评论
-              </button>
+              <div className="comments-list">
+                {commentsLoading ? (
+                  <div className="loading-container"><p>正在加载评论...</p></div>
+                ) : comments.length > 0 ? (
+                  comments.map((comment) => (
+                    <div key={comment.id} className="comment-item">
+                      <div className="comment-avatar">用</div>
+                      <div className="comment-content">
+                        <div className="comment-author">用户 {comment.user_id}</div>
+                        <div className="comment-text">{comment.content}</div>
+                        <div className="comment-time">{comment.created_at}</div>
+                      </div>
+                      {/* 删除按钮，仅显示在自己评论右侧 */}
+                      {currentUserId === comment.user_id && (
+                        <div className="comment-actions">
+                          <span
+                            className="comment-action-dot"
+                            onClick={() => {
+                              setDeleteTargetId(comment.id);
+                              setShowDeleteConfirm(true);
+                            }}
+                          >···</span>
+                          {showDeleteConfirm && deleteTargetId === comment.id && (
+                            <div className="comment-delete-confirm">
+                              <span
+                                className="comment-delete-btn"
+                                onClick={() => {
+                                  setShowDeleteConfirm(false);
+                                  handleDeleteComment(comment.id);
+                                }}
+                              >删除</span>
+                              <span
+                                className="comment-cancel-btn"
+                                onClick={() => setShowDeleteConfirm(false)}
+                              >取消</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-comments"><p>暂无评论</p></div>
+                )}
+              </div>
+              {comments.length < commentsTotal && (
+                <button className="view-all-comments-btn" onClick={handleLoadMoreComments}>
+                  查看更多评论
+                </button>
+              )}
             </div>
           </div>
         </div>
