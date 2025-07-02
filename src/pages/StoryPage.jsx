@@ -313,86 +313,97 @@ export default function StoryPage() {
           </div>
         )}
 
-        {/* 故事时间线 */}
+        {/* 故事列表 */}
         {!loading && !error && (
-          <div className="timeline-container">
-            <div className="timeline-line"></div>
+          <div className="stories-container">
+            <div className="vertical-timeline-line"></div>
             
             {formattedStories.map((story, index) => (
-            <div key={story.id} className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`}>
-              <div className="timeline-marker">
-                <span className="timeline-icon">{story.thumbnail}</span>
-              </div>
-              
-              <div className="story-card">
-                <div className="story-header">
-                  <div className="story-meta">
-                    <span className="story-category">{story.category}</span>
-                    <span 
-                      className="story-status"
-                      style={{ backgroundColor: getStatusColor(story.status) }}
-                    >
-                      {getStatusText(story.status)}
-                    </span>
-                    <span 
-                      className="story-importance"
-                      style={{ color: getImportanceColor(story.importance) }}
-                    >
-                      {story.importance === 'high' ? '🔥 重要' : story.importance === 'medium' ? '⚡ 一般' : '📝 普通'}
-                    </span>
-                  </div>
-                  <div className="story-date">
-                    {story.startDate} - {story.lastUpdate}
-                  </div>
+              <div key={story.id} className="story-item">
+                <div className="story-timeline-marker">
+                  <span className="timeline-icon">{story.thumbnail}</span>
                 </div>
-
-                <h3 className="story-title">
-                  <Link to={`/story/${story.id}`}>{story.title}</Link>
-                </h3>
                 
-                <p className="story-description">{story.description}</p>
-                
-                <div className="story-stats">
-                  <span className="news-count">📰 {story.newsCount} 条新闻</span>
-                  <span className="view-count">👁️ {story.viewCount} 浏览</span>
-                  <span className="hotness-score">🔥 热度 {(story.hotnessScore || 0).toFixed(1)}</span>
-                  <span className="interaction-count">❤️ {story.likeCount} 👥 {story.commentCount}</span>
-                </div>
+                <Link to={`/story/${story.id}`} className="story-card-horizontal-link">
+                  <div className="story-card-horizontal">
+                    {/* 左侧：标题和数据 */}
+                    <div className="story-content-left">
+                      <div className="story-header">
+                        <div className="story-meta">
+                          <span className="story-category">{story.category}</span>
+                          <span 
+                            className="story-status"
+                            style={{ backgroundColor: getStatusColor(story.status) }}
+                          >
+                            {getStatusText(story.status)}
+                          </span>
+                          <span 
+                            className="story-importance"
+                            style={{ color: getImportanceColor(story.importance) }}
+                          >
+                            {story.importance === 'high' ? '🔥 重要' : story.importance === 'medium' ? '⚡ 一般' : '📝 普通'}
+                          </span>
+                        </div>
+                        <div className="story-date">
+                          {story.startDate} - {story.lastUpdate}
+                        </div>
+                      </div>
 
-                <div className="story-tags">
-                  {story.tags.map(tag => (
-                    <span key={tag} className="story-tag">#{tag}</span>
-                  ))}
-                </div>
+                      <h3 className="story-title">
+                        {story.title}
+                      </h3>
+                      
+                      <p className="story-description">{story.description}</p>
+                      
+                      <div className="story-stats">
+                        <span className="news-count">📰 {story.newsCount} 条新闻</span>
+                        <span className="view-count">👁️ {story.viewCount} 浏览</span>
+                        <span className="hotness-score">🔥 热度 {(story.hotnessScore || 0).toFixed(1)}</span>
+                        <span className="interaction-count">❤️ {story.likeCount} 👥 {story.commentCount}</span>
+                      </div>
 
-                <div className="story-preview-timeline">
-                  <h4>事件时间线：</h4>
-                  <div className="mini-timeline">
-                    <div className="mini-timeline-item">
-                      <span className="mini-date">{story.startDate}</span>
-                      <span className="mini-event">事件开始</span>
+                      <div className="story-tags">
+                        {story.tags.map(tag => (
+                          <span key={tag} className="story-tag">#{tag}</span>
+                        ))}
+                      </div>
                     </div>
-                    <div className="mini-timeline-item">
-                      <span className="mini-date">{story.lastUpdate}</span>
-                      <span className="mini-event">最后更新</span>
-                    </div>
-                    <div className="mini-timeline-item">
-                      <span className="mini-date">进行中</span>
-                      <span className="mini-event">
-                        状态: {story.status === 'ongoing' ? '进行中' : story.status === 'ended' ? '已结束' : '未知'}
-                      </span>
+
+                    {/* 右侧：时间线 */}
+                    <div className="story-timeline-right">
+                      <div className="story-preview-timeline">
+                        <h4>事件时间线</h4>
+                        <div className="mini-timeline">
+                          <div className="mini-timeline-item">
+                            <div className="mini-timeline-dot"></div>
+                            <div className="mini-timeline-content">
+                              <span className="mini-date">{story.startDate}</span>
+                              <span className="mini-event">事件开始</span>
+                            </div>
+                          </div>
+                          <div className="mini-timeline-item">
+                            <div className="mini-timeline-dot"></div>
+                            <div className="mini-timeline-content">
+                              <span className="mini-date">{story.lastUpdate}</span>
+                              <span className="mini-event">最后更新</span>
+                            </div>
+                          </div>
+                          <div className="mini-timeline-item">
+                            <div className="mini-timeline-dot current"></div>
+                            <div className="mini-timeline-content">
+                              <span className="mini-date">当前</span>
+                              <span className="mini-event">
+                                状态: {story.status === 'ongoing' ? '进行中' : story.status === 'ended' ? '已结束' : '未知'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <div className="story-actions">
-                  <Link to={`/story/${story.id}`} className="view-story-btn">
-                    查看完整故事 →
-                  </Link>
-                </div>
+                </Link>
               </div>
-            </div>
-          ))}
+            ))}
           </div>
         )}
 
