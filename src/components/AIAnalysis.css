@@ -1,0 +1,605 @@
+/* AI分析组件样式 */
+.ai-analysis {
+  background: var(--card-bg, #fff);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.analysis-section {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.analysis-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.analysis-section h3 {
+  color: var(--text-primary, #333);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary {
+  color: var(--text-secondary, #666);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 关键词样式 */
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.keyword-tag {
+  background: var(--primary-light, #e3f2fd);
+  color: var(--primary, #1976d2);
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.keyword-tag:hover {
+  background: var(--primary, #1976d2);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* 情感分析样式 */
+.sentiment-analysis {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sentiment-badge {
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.sentiment-score {
+  color: var(--text-secondary, #666);
+  font-size: 14px;
+}
+
+/* 事件分析样式 */
+.event-analysis {
+  color: var(--text-primary, #333);
+  font-size: 15px;
+  line-height: 1.8;
+  background: var(--bg-light, #f5f5f5);
+  padding: 16px;
+  border-radius: 8px;
+  margin: 0;
+}
+
+/* 影响力评估样式 */
+.impact-assessment {
+  space-y: 12px;
+}
+
+.impact-level {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.impact-badge {
+  color: white;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.impact-score {
+  color: var(--text-secondary, #666);
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+.impact-score strong {
+  color: var(--primary, #1976d2);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.impact-scope {
+  color: var(--text-secondary, #666);
+  font-size: 14px;
+  font-style: italic;
+  margin: 8px 0 0 0;
+}
+
+/* 趋势预测样式 */
+.trend-predictions {
+  display: grid;
+  gap: 16px;
+}
+
+.prediction-item {
+  background: var(--bg-light, #f9f9f9);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.prediction-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.prediction-item h4 {
+  color: var(--primary, #1976d2);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.prediction-trend {
+  color: var(--text-primary, #333);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.prediction-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.probability {
+  color: var(--text-secondary, #666);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.factors {
+  color: var(--text-secondary, #666);
+  font-size: 13px;
+}
+
+/* 分析步骤样式 */
+.analysis-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step-item {
+  background: var(--bg-light, #f9f9f9);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.step-item.expanded {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.step-header:hover {
+  background-color: var(--hover-bg, #f0f0f0);
+}
+
+.step-number {
+  background: var(--primary, #1976d2);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.step-title {
+  flex: 1;
+  color: var(--text-primary, #333);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.step-confidence {
+  color: var(--text-secondary, #666);
+  font-size: 13px;
+  margin-right: 12px;
+}
+
+.step-toggle {
+  color: var(--text-secondary, #666);
+  font-size: 20px;
+  font-weight: 300;
+  width: 20px;
+  text-align: center;
+}
+
+.step-content {
+  padding: 0 16px 16px 56px;
+  animation: slideDown 0.3s ease;
+}
+
+.step-description {
+  color: var(--text-secondary, #666);
+  font-size: 14px;
+  margin: 0 0 8px 0;
+}
+
+.step-result {
+  color: var(--text-primary, #333);
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 相关话题样式 */
+.related-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topic-tag {
+  background: var(--secondary-light, #f3e5f5);
+  color: var(--secondary, #7b1fa2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* 分析元信息样式 */
+.analysis-meta {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--text-secondary, #999);
+}
+
+.analysis-meta p {
+  margin: 0;
+}
+
+/* 加载状态样式 */
+.ai-analysis-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--border-color, #e0e0e0);
+  border-top-color: var(--primary, #1976d2);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.ai-analysis-loading p {
+  color: var(--text-secondary, #666);
+  font-size: 15px;
+  margin: 0;
+}
+
+/* 错误状态样式 */
+.ai-analysis-error {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.ai-analysis-error p {
+  color: var(--error, #f44336);
+  font-size: 15px;
+  margin: 0 0 16px 0;
+}
+
+.ai-analysis-error button,
+.ai-analysis-empty button {
+  background: var(--primary, #1976d2);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ai-analysis-error button:hover,
+.ai-analysis-empty button:hover {
+  background: var(--primary-dark, #1565c0);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+/* 空状态样式 */
+.ai-analysis-empty {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.ai-analysis-empty p {
+  color: var(--text-secondary, #666);
+  font-size: 15px;
+  margin: 0 0 16px 0;
+}
+
+/* 动画 */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .ai-analysis {
+    padding: 16px;
+  }
+
+  .analysis-section h3 {
+    font-size: 16px;
+  }
+
+  .step-header {
+    padding: 10px 12px;
+  }
+
+  .step-content {
+    padding: 0 12px 12px 44px;
+  }
+
+  .analysis-meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* 暗色主题支持 */
+@media (prefers-color-scheme: dark) {
+  .ai-analysis {
+    background: #1e1e1e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .keyword-tag {
+    background: rgba(25, 118, 210, 0.2);
+  }
+
+  .event-analysis,
+  .prediction-item,
+  .step-item {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+  }
+
+  .step-header:hover {
+    background-color: #3a3a3a;
+  }
+}
+
+/* 新增状态样式 */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.status-indicator.demo_mode {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ff8f00;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.status-indicator.completed {
+  background: rgba(76, 175, 80, 0.1);
+  color: #388e3c;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.status-indicator.service_unavailable {
+  background: rgba(244, 67, 54, 0.1);
+  color: #d32f2f;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+/* AI分析失败和处理中状态 */
+.ai-analysis-failed,
+.ai-analysis-processing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  background: var(--card-bg, #fff);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.failed-icon,
+.processing-icon,
+.empty-icon,
+.error-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: pulse 2s infinite;
+}
+
+.ai-analysis-failed h3,
+.ai-analysis-processing h3 {
+  color: var(--text-primary, #333);
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.ai-analysis-failed p,
+.ai-analysis-processing p {
+  color: var(--text-secondary, #666);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+  max-width: 400px;
+}
+
+/* 更新空状态和错误状态样式 */
+.ai-analysis-empty h3,
+.ai-analysis-error h3 {
+  color: var(--text-primary, #333);
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.ai-analysis-empty .empty-icon,
+.ai-analysis-error .error-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: pulse 2s infinite;
+}
+
+/* 按钮样式更新 */
+.trigger-btn,
+.retry-btn,
+.refresh-btn,
+.retry-analysis-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px;
+}
+
+.trigger-btn:hover,
+.retry-btn:hover,
+.refresh-btn:hover,
+.retry-analysis-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.trigger-btn:disabled,
+.retry-btn:disabled,
+.refresh-btn:disabled,
+.retry-analysis-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.error-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.analysis-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .error-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .trigger-btn,
+  .retry-btn,
+  .refresh-btn,
+  .retry-analysis-btn {
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  .ai-analysis-failed,
+  .ai-analysis-processing,
+  .ai-analysis-empty,
+  .ai-analysis-error {
+    padding: 32px 16px;
+  }
+} 

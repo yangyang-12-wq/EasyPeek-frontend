@@ -5,7 +5,7 @@ import ThemeToggle from '../components/ThemeToggle';
 import './search.css';
 
 const SearchPage = () => {
-  const [searchQuery, setSearchQuery] = useState('人工智能');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('relevance');
   const [timeFilter, setTimeFilter] = useState('all-time');
@@ -14,154 +14,107 @@ const SearchPage = () => {
   const navigate = useNavigate();
 
   const [searchResults, setSearchResults] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [hotKeywords, setHotKeywords] = useState([]);
+  const [isSmartSearch, setIsSmartSearch] = useState(true); // 默认启用智能搜索
 
-  // 获取新闻数据
+  const categories = [
+    { name: "科技", count: 0 },
+    { name: "政治", count: 0 },
+    { name: "经济", count: 0 },
+    { name: "环境", count: 0 },
+    { name: "医疗", count: 0 },
+    { name: "教育", count: 0 },
+  ];
+
+  // 获取热门关键词
   useEffect(() => {
-    const fetchNews = async () => {
+    const fetchHotKeywords = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/v1/news');
+        const response = await fetch('http://localhost:8080/api/v1/news/hot-keywords?limit=15');
         const result = await response.json();
         
-        if (result.code === 200 && result.data) {
-          // 转换数据格式以适配搜索页面
-          const transformedData = result.data.map(news => ({
-            id: news.id,
-            title: news.title,
-            summary: news.summary,
-            category: news.category,
-            timeline: `${Math.floor(Math.random() * 10) + 1}个关键节点`, // 模拟数据
-            followers: news.view_count || Math.floor(Math.random() * 2000) + 100,
-            lastUpdate: "2小时前", // 模拟数据
-            relevance: Math.floor(Math.random() * 30) + 70, // 模拟相关性分数
-            published_at: news.published_at,
-            source: news.source,
-            author: news.author,
-            image_url: news.image_url,
-            view_count: news.view_count,
-            like_count: news.like_count,
-            comment_count: news.comment_count,
-          }));
-          setSearchResults(transformedData);
+        if (result.code === 200 && result.data && result.data.length > 0) {
+          setHotKeywords(result.data);
+        } else {
+          // 如果没有AI关键词，使用默认关键词
+          setHotKeywords([
+            "人工智能", "气候变化", "新能源", "区块链", "元宇宙",
+            "量子计算", "生物技术", "太空探索", "5G技术", "电动汽车"
+          ]);
         }
       } catch (err) {
-        console.error('获取新闻数据失败:', err);
-        // 如果API调用失败，使用默认数据
-        setSearchResults([
-          {
-            id: 1,
-            title: "科技巨头AI竞赛白热化",
-            summary: "多家科技公司发布最新AI产品，市场竞争进入新阶段",
-            category: "科技",
-            timeline: "5个关键节点",
-            followers: 1234,
-            lastUpdate: "2小时前",
-            relevance: 95,
-          },
-          {
-            id: 2,
-            title: "人工智能在医疗领域的突破",
-            summary: "AI技术在疾病诊断和药物研发方面取得重大进展",
-            category: "医疗",
-            timeline: "3个关键节点",
-            followers: 856,
-            lastUpdate: "1天前",
-            relevance: 88,
-          },
-          {
-            id: 3,
-            title: "自动驾驶技术最新发展",
-            summary: "多家车企和科技公司在自动驾驶领域展开激烈竞争",
-            category: "汽车",
-            timeline: "7个关键节点",
-            followers: 1567,
-            lastUpdate: "3小时前",
-            relevance: 82,
-          },
-          {
-            id: 4,
-            title: "AI芯片技术突破",
-            summary: "新一代AI芯片性能大幅提升，功耗显著降低",
-            category: "科技",
-            timeline: "4个关键节点",
-            followers: 2341,
-            lastUpdate: "5小时前",
-            relevance: 78,
-          },
-          {
-            id: 5,
-            title: "人工智能教育应用",
-            summary: "AI技术在教育领域的创新应用，个性化学习成为可能",
-            category: "教育",
-            timeline: "6个关键节点",
-            followers: 987,
-            lastUpdate: "1天前",
-            relevance: 75,
-          },
-          {
-            id: 6,
-            title: "AI在金融科技中的应用",
-            summary: "人工智能技术推动金融行业数字化转型",
-            category: "经济",
-            timeline: "8个关键节点",
-            followers: 1456,
-            lastUpdate: "4小时前",
-            relevance: 72,
-          },
-          {
-            id: 7,
-            title: "人工智能伦理讨论",
-            summary: "社会各界对AI技术发展中的伦理问题展开深入讨论",
-            category: "社会",
-            timeline: "2个关键节点",
-            followers: 654,
-            lastUpdate: "2天前",
-            relevance: 68,
-          },
-          {
-            id: 8,
-            title: "AI在环保领域的应用",
-            summary: "人工智能技术助力环境保护和可持续发展",
-            category: "环境",
-            timeline: "5个关键节点",
-            followers: 789,
-            lastUpdate: "6小时前",
-            relevance: 65,
-          },
+        console.error('获取热门关键词失败:', err);
+        // 使用默认关键词
+        setHotKeywords([
+          "人工智能", "气候变化", "新能源", "区块链", "元宇宙",
+          "量子计算", "生物技术", "太空探索", "5G技术", "电动汽车"
         ]);
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchNews();
+    fetchHotKeywords();
   }, []);
 
-  const hotKeywords = [
-    "人工智能",
-    "气候变化",
-    "新能源",
-    "区块链",
-    "元宇宙",
-    "量子计算",
-    "生物技术",
-    "太空探索",
-    "5G技术",
-    "电动汽车",
-  ];
+  // 执行搜索
+  const performSearch = async (query, page = 1) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setTotal(0);
+      return;
+    }
 
-  const categories = [
-    { name: "科技", count: 1234 },
-    { name: "政治", count: 856 },
-    { name: "经济", count: 1567 },
-    { name: "环境", count: 743 },
-    { name: "医疗", count: 892 },
-    { name: "教育", count: 456 },
-  ];
+    setLoading(true);
+    try {
+      // 根据是否启用智能搜索选择不同的API端点
+      const searchEndpoint = isSmartSearch ? 'smart-search' : 'search';
+      const response = await fetch(
+        `http://localhost:8080/api/v1/news/${searchEndpoint}?query=${encodeURIComponent(query)}&page=${page}&size=${newsPerPage}`
+      );
+      const result = await response.json();
+      
+      if (result.code === 200 && result.data) {
+        // 转换数据格式以适配搜索页面
+        const transformedData = result.data.map(news => ({
+          id: news.id,
+          title: news.title,
+          summary: news.summary,
+          category: news.category || '未分类',
+          relevance: Math.floor(Math.random() * 30) + 70, // 模拟相关性分数
+          published_at: news.published_at,
+          source: news.source,
+          author: news.author,
+          image_url: news.image_url,
+          view_count: news.view_count || 0,
+          like_count: news.like_count || 0,
+          comment_count: news.comment_count || 0,
+        }));
+        
+        setSearchResults(transformedData);
+        
+        // 处理分页信息
+        if (result.pagination) {
+          setTotal(result.pagination.total);
+        } else {
+          setTotal(transformedData.length);
+        }
+      } else {
+        setSearchResults([]);
+        setTotal(0);
+      }
+    } catch (err) {
+      console.error('搜索失败:', err);
+      setSearchResults([]);
+      setTotal(0);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // 筛选和排序搜索结果
   const filteredAndSortedResults = useMemo(() => {
-    let filtered = searchResults;
+    let filtered = [...searchResults];
 
     // 按分类筛选
     if (selectedCategory !== 'all') {
@@ -173,14 +126,10 @@ const SearchPage = () => {
         'health': '医疗',
         'education': '教育'
       };
-      filtered = filtered.filter(result => result.category === categoryMap[selectedCategory]);
-    }
-
-    // 按搜索关键词筛选
-    if (searchQuery) {
+      const targetCategory = categoryMap[selectedCategory];
       filtered = filtered.filter(result => 
-        result.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        result.summary.toLowerCase().includes(searchQuery.toLowerCase())
+        result.category === targetCategory || 
+        result.category.includes(targetCategory)
       );
     }
 
@@ -203,17 +152,18 @@ const SearchPage = () => {
     });
 
     return filtered;
-  }, [searchResults, searchQuery, selectedCategory, sortBy]);
+  }, [searchResults, selectedCategory, sortBy]);
 
   // 分页逻辑
-  const totalPages = Math.ceil(filteredAndSortedResults.length / newsPerPage);
-  const startIndex = (currentPage - 1) * newsPerPage;
-  const endIndex = startIndex + newsPerPage;
-  const currentResults = filteredAndSortedResults.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(total / newsPerPage);
+  const currentResults = filteredAndSortedResults;
 
   // 分页处理函数
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    if (searchQuery.trim()) {
+      performSearch(searchQuery, page);
+    }
     // 滚动到页面顶部
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -226,12 +176,14 @@ const SearchPage = () => {
   // 处理搜索
   const handleSearch = () => {
     setCurrentPage(1);
+    performSearch(searchQuery, 1);
   };
 
   // 处理关键词点击
   const handleKeywordClick = (keyword) => {
     setSearchQuery(keyword);
     setCurrentPage(1);
+    performSearch(keyword, 1);
   };
 
   // 处理分类点击
@@ -245,6 +197,15 @@ const SearchPage = () => {
     navigate(`/newspage/${newsId}`);
   };
 
+  // 切换搜索模式
+  const handleSearchModeToggle = () => {
+    setIsSmartSearch(!isSmartSearch);
+    if (searchQuery.trim()) {
+      // 重新搜索以应用新的搜索模式
+      performSearch(searchQuery, 1);
+    }
+  };
+
   return (
     <div className="searchpage-container">
       <Header />
@@ -254,7 +215,11 @@ const SearchPage = () => {
         <div className="search-section">
           <div className="search-header">
             <h1 className="search-title">智能搜索</h1>
-            <p className="search-subtitle">搜索感兴趣的新闻事件，追踪完整发展过程</p>
+            <p className="search-subtitle">
+              {isSmartSearch 
+                ? "基于AI分析的关键词和内容进行智能匹配搜索" 
+                : "在新闻标题和内容中进行传统搜索"}
+            </p>
           </div>
 
           {/* Search Bar */}
@@ -266,7 +231,7 @@ const SearchPage = () => {
                 </svg>
                 <input
                   type="text"
-                  placeholder="输入关键词搜索新闻事件..."
+                  placeholder={isSmartSearch ? "输入关键词进行智能搜索..." : "输入关键词搜索新闻事件..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="search-input"
@@ -274,8 +239,24 @@ const SearchPage = () => {
                 />
               </div>
               <button className="search-btn" onClick={handleSearch}>
-                搜索
+                {isSmartSearch ? "🤖 智能搜索" : "🔍 搜索"}
               </button>
+            </div>
+            
+            {/* 搜索模式切换 */}
+            <div className="search-mode-toggle">
+              <label className="toggle-label">
+                <input
+                  type="checkbox"
+                  checked={isSmartSearch}
+                  onChange={handleSearchModeToggle}
+                  className="toggle-input"
+                />
+                <span className="toggle-slider"></span>
+                <span className="toggle-text">
+                  {isSmartSearch ? "🤖 AI智能搜索" : "🔍 传统搜索"}
+                </span>
+              </label>
             </div>
           </div>
 
@@ -332,7 +313,9 @@ const SearchPage = () => {
           <div className="sidebar">
             {/* Hot Keywords */}
             <div className="sidebar-card">
-              <h3 className="card-title">热门关键词</h3>
+              <h3 className="card-title">
+                {isSmartSearch ? "🤖 AI热门关键词" : "🔥 热门关键词"}
+              </h3>
               <div className="keywords-container">
                 {hotKeywords.map((keyword) => (
                   <button
@@ -368,10 +351,21 @@ const SearchPage = () => {
             <div className="sidebar-card">
               <h3 className="card-title">搜索技巧</h3>
               <div className="search-tips">
-                <div className="tip-item">• 使用引号搜索精确短语</div>
-                <div className="tip-item">• 使用 + 号包含必需词汇</div>
-                <div className="tip-item">• 使用 - 号排除特定词汇</div>
-                <div className="tip-item">• 使用 OR 搜索多个选项</div>
+                {isSmartSearch ? (
+                  <>
+                    <div className="tip-item">• AI会分析关键词含义进行智能匹配</div>
+                    <div className="tip-item">• 支持主题相关性搜索</div>
+                    <div className="tip-item">• 自动匹配AI分析的关键词</div>
+                    <div className="tip-item">• 包含事件关联新闻搜索</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="tip-item">• 使用引号搜索精确短语</div>
+                    <div className="tip-item">• 使用 + 号包含必需词汇</div>
+                    <div className="tip-item">• 使用 - 号排除特定词汇</div>
+                    <div className="tip-item">• 使用 OR 搜索多个选项</div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -380,7 +374,10 @@ const SearchPage = () => {
           <div className="main-content">
             <div className="content-header">
               <h2 className="content-title">搜索结果</h2>
-              <div className="results-count">找到 {filteredAndSortedResults.length} 个相关结果</div>
+              <div className="results-count">
+                找到 {total} 个相关结果
+                {isSmartSearch && <span className="smart-badge">🤖 智能匹配</span>}
+              </div>
             </div>
 
             {/* Search Results */}
@@ -388,7 +385,7 @@ const SearchPage = () => {
               {loading ? (
                 <div className="loading-container">
                   <div className="loading-spinner"></div>
-                  <p>正在加载搜索结果...</p>
+                  <p>正在{isSmartSearch ? '智能' : ''}搜索结果...</p>
                 </div>
               ) : (
                 currentResults.map((result) => (
@@ -399,7 +396,7 @@ const SearchPage = () => {
                         <div className="result-relevance">相关度: {result.relevance}%</div>
                       </div>
                       <div className="result-time">
-                        {result.published_at ? new Date(result.published_at).toLocaleDateString('zh-CN') : result.lastUpdate}
+                        {result.published_at ? new Date(result.published_at).toLocaleDateString('zh-CN') : '未知时间'}
                       </div>
                     </div>
 
@@ -413,19 +410,19 @@ const SearchPage = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
-                          {result.view_count || 0} 阅读
+                          {result.view_count} 阅读
                         </div>
                         <div className="stat-item">
                           <svg className="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                           </svg>
-                          {result.like_count || 0} 点赞
+                          {result.like_count} 点赞
                         </div>
                         <div className="stat-item">
                           <svg className="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                           </svg>
-                          {result.comment_count || 0} 评论
+                          {result.comment_count} 评论
                         </div>
                       </div>
 
@@ -439,10 +436,18 @@ const SearchPage = () => {
             </div>
 
             {/* 空状态显示 */}
-            {filteredAndSortedResults.length === 0 && (
+            {!loading && currentResults.length === 0 && searchQuery && (
               <div className="no-results">
                 <h3>未找到匹配的结果</h3>
-                <p>尝试调整搜索关键词或筛选条件</p>
+                <p>尝试调整搜索关键词或切换搜索模式</p>
+              </div>
+            )}
+
+            {/* 初始状态显示 */}
+            {!loading && currentResults.length === 0 && !searchQuery && (
+              <div className="no-results">
+                <h3>开始您的{isSmartSearch ? '智能' : ''}搜索</h3>
+                <p>输入关键词或点击热门标签开始搜索</p>
               </div>
             )}
 
@@ -450,47 +455,44 @@ const SearchPage = () => {
             {totalPages > 1 && (
               <div className="pagination">
                 <div className="pagination-info">
-                  <span>共 {filteredAndSortedResults.length} 个结果，第 {currentPage} / {totalPages} 页</span>
+                  <span>共 {total} 个结果，第 {currentPage} / {totalPages} 页</span>
                 </div>
                 <div className="pagination-controls">
-                  <button 
-                    className="pagination-btn prev" 
-                    onClick={() => handlePageChange(currentPage - 1)}
+                  <button
+                    className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+                    onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
                   >
                     上一页
                   </button>
                   
-                  <div className="pagination-numbers">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
-                      // 显示逻辑：当前页前后各2页
-                      if (
-                        page === 1 || 
-                        page === totalPages || 
-                        (page >= currentPage - 2 && page <= currentPage + 2)
-                      ) {
-                        return (
-                          <button
-                            key={page}
-                            className={`pagination-number ${page === currentPage ? 'active' : ''}`}
-                            onClick={() => handlePageChange(page)}
-                          >
-                            {page}
-                          </button>
-                        );
-                      } else if (
-                        page === currentPage - 3 || 
-                        page === currentPage + 3
-                      ) {
-                        return <span key={page} className="pagination-ellipsis">...</span>;
-                      }
-                      return null;
-                    })}
-                  </div>
+                  {/* 页码按钮 */}
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+                    
+                    return (
+                      <button
+                        key={pageNum}
+                        className={`pagination-btn ${currentPage === pageNum ? 'active' : ''}`}
+                        onClick={() => handlePageChange(pageNum)}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
                   
-                  <button 
-                    className="pagination-btn next" 
-                    onClick={() => handlePageChange(currentPage + 1)}
+                  <button
+                    className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+                    onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
                   >
                     下一页

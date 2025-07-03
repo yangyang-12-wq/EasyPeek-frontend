@@ -9,6 +9,7 @@ import HomePage from '../pages/HomePage';
 import NewsPage from '../pages/newspage';
 import StoryPage from '../pages/StoryPage';
 import StoryDetailPage from '../pages/StoryDetailPage';
+import EventDetailPage from '../pages/EventDetailPage';
 import GlobalPage from '../pages/global';
 import RecommendPage from '../pages/RecommendPage';
 import ProfilePage from '../pages/user/profile';
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
   {
     path: '/story/:id',
     element: <StoryDetailPage />
+  },
+  {
+    path: '/event/:id',
+    element: <EventDetailPage />
   },
   {
     path: '/global',
