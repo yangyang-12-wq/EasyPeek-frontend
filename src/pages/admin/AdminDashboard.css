@@ -1,74 +1,6 @@
-.admin-dashboard-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    width: 100vw;
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
-    position: relative;
-    overflow-x: hidden;
-    box-sizing: border-box;
-}
-
-/* 暗色主题样式 */
-body.dark .admin-dashboard-container {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-}
-
-body.dark .admin-dashboard-container::before {
-    background-image:
-        radial-gradient(2px 2px at 20px 30px, rgba(139, 92, 246, 0.08), transparent),
-        radial-gradient(2px 2px at 40px 70px, rgba(59, 130, 246, 0.06), transparent),
-        radial-gradient(1px 1px at 90px 40px, rgba(139, 92, 246, 0.1), transparent),
-        radial-gradient(1px 1px at 130px 80px, rgba(59, 130, 246, 0.08), transparent);
-}
-
-/* 动态背景效果 */
-.admin-dashboard-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image:
-        radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.1), transparent),
-        radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.08), transparent),
-        radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.12), transparent),
-        radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.1), transparent);
-    background-repeat: repeat;
-    background-size: 200px 100px;
-    animation: particlesMove 20s linear infinite;
-    pointer-events: none;
-}
-
-@keyframes particlesMove {
-    0% {
-        transform: translateX(0) translateY(0);
-    }
-
-    100% {
-        transform: translateX(-200px) translateY(-100px);
-    }
-}
-
-.admin-dashboard-content {
-    flex-grow: 1;
-    width: 100%;
-    margin: 0;
-    padding: 40px 24px;
-    position: relative;
-    z-index: 10;
-    box-sizing: border-box;
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
 .dashboard-header {
     text-align: center;
     margin-bottom: 60px;
-    animation: fadeInUp 0.8s ease-out;
 }
 
 .dashboard-title {
@@ -93,7 +25,6 @@ body.dark .admin-dashboard-container::before {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 24px;
     margin-bottom: 60px;
-    animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .stat-card {
@@ -199,7 +130,6 @@ body.dark .stat-label {
 /* 快速操作 */
 .quick-actions-section {
     margin-bottom: 60px;
-    animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
 .quick-actions-grid {
@@ -332,9 +262,7 @@ body.dark .quick-action-card:hover .action-arrow {
 }
 
 /* 最近活动 */
-.recent-activity-section {
-    animation: fadeInUp 0.8s ease-out 0.6s both;
-}
+.recent-activity-section {}
 
 .activity-card {
     background: rgba(255, 255, 255, 0.95);
@@ -434,18 +362,6 @@ body.dark .activity-description {
     color: #9ca3af;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /* 响应式设计 */
 @media (max-width: 1024px) {
     .stats-grid {
@@ -459,10 +375,6 @@ body.dark .activity-description {
 }
 
 @media (max-width: 768px) {
-    .admin-dashboard-content {
-        padding: 24px 16px;
-    }
-
     .dashboard-title {
         font-size: 2.5rem;
     }

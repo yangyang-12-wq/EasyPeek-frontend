@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import ThemeToggle from '../components/ThemeToggle';
@@ -9,136 +9,186 @@ const StoryDetailPage = () => {
   const [story, setStory] = useState(null);
   const [newsTimeline, setNewsTimeline] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [newsLoading, setNewsLoading] = useState(false);
+  const [newsError, setNewsError] = useState(null);
   const [sortOrder, setSortOrder] = useState('desc'); // desc: 最新在前, asc: 最早在前
   const [filterType, setFilterType] = useState('all'); // all, major, minor
   const [currentPage, setCurrentPage] = useState(1);
   const [newsPerPage] = useState(5); // 每页显示5条新闻
+  const [eventStats, setEventStats] = useState(null);
 
-  // 使用useMemo缓存模拟故事详情数据
-  const mockStoryDetail = useMemo(() => ({
-    id: parseInt(id),
-    title: "AI技术发展与竞争",
-    description: "追踪全球人工智能技术的最新发展动态，包括各大科技公司的AI产品发布、技术突破、市场竞争等重要事件。",
-    category: "科技",
-    status: "进行中",
-    importance: "高",
-    startDate: "2024-01-15",
-    lastUpdate: "2024-12-20",
-    totalNews: 45,
-    tags: ["人工智能", "科技竞争", "OpenAI", "Google", "微软", "技术创新"],
-    summary: "本故事追踪了2024年以来AI领域的重大发展，从ChatGPT的持续更新到Google Gemini的发布，再到各大科技公司在AI领域的激烈竞争。这些事件不仅改变了科技行业的格局，也对全球经济和社会产生了深远影响。"
-  }), [id]);
-
-  // 使用useMemo缓存模拟新闻时间线数据
-  const mockNewsTimeline = useMemo(() => [
-    {
-      id: 1,
-      date: "2024-12-20",
-      time: "14:30",
-      type: "major", // major, minor
-      title: "OpenAI发布GPT-4 Turbo最新版本",
-      summary: "OpenAI宣布推出GPT-4 Turbo的最新版本，在推理能力和响应速度方面都有显著提升。",
-      source: "TechCrunch",
-      impact: "高",
-      relatedNews: 3
-    },
-    {
-      id: 2,
-      date: "2024-12-18",
-      time: "09:15",
-      type: "major",
-      title: "Google Gemini Ultra正式商用",
-      summary: "Google正式推出Gemini Ultra的商业版本，直接挑战OpenAI在企业AI市场的地位。",
-      source: "The Verge",
-      impact: "高",
-      relatedNews: 5
-    },
-    {
-      id: 3,
-      date: "2024-12-15",
-      time: "16:45",
-      type: "minor",
-      title: "微软Azure AI服务更新",
-      summary: "微软更新了Azure AI服务套件，增加了新的机器学习工具和API接口。",
-      source: "Microsoft Blog",
-      impact: "中",
-      relatedNews: 2
-    },
-    {
-      id: 4,
-      date: "2024-12-12",
-      time: "11:20",
-      type: "major",
-      title: "AI芯片市场竞争加剧",
-      summary: "英伟达、AMD和英特尔在AI芯片领域的竞争进入白热化阶段，新产品发布频繁。",
-      source: "Reuters",
-      impact: "高",
-      relatedNews: 4
-    },
-    {
-      id: 5,
-      date: "2024-12-10",
-      time: "13:30",
-      type: "minor",
-      title: "Meta发布新AI研究成果",
-      summary: "Meta AI研究团队发布了关于多模态AI的最新研究论文，展示了新的技术突破。",
-      source: "Meta AI Blog",
-      impact: "中",
-      relatedNews: 1
-    },
-    {
-      id: 6,
-      date: "2024-12-08",
-      time: "10:00",
-      type: "major",
-      title: "AI监管政策新进展",
-      summary: "欧盟AI法案正式生效，对AI技术的开发和应用提出了新的监管要求。",
-      source: "EU Official",
-      impact: "高",
-      relatedNews: 6
-    },
-    {
-      id: 7,
-      date: "2024-12-05",
-      time: "15:15",
-      type: "minor",
-      title: "百度文心一言功能升级",
-      summary: "百度宣布文心一言新增多项功能，包括代码生成和图像理解能力的提升。",
-      source: "Baidu News",
-      impact: "中",
-      relatedNews: 2
-    },
-    {
-      id: 8,
-      date: "2024-12-01",
-      time: "12:45",
-      type: "major",
-      title: "AI安全联盟成立",
-      summary: "多家科技巨头联合成立AI安全联盟，共同制定AI安全标准和最佳实践。",
-      source: "AI Safety Alliance",
-      impact: "高",
-      relatedNews: 8
+  // API调用函数
+  const fetchEventDetail = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/events/${id}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.code === 200) {
+        setStory(data.data);
+        // 记录浏览行为
+        await fetch(`http://localhost:8080/api/v1/events/${id}/view`, {
+          method: 'POST'
+        }).catch(err => console.warn('记录浏览失败:', err));
+      } else {
+        throw new Error(data.message || '获取事件详情失败');
+      }
+    } catch (err) {
+      console.error('获取事件详情失败:', err);
+      setError(err.message || '获取事件详情失败，请稍后重试');
+    } finally {
+      setLoading(false);
     }
-  ], []);
+  };
+
+  // 获取事件相关新闻
+  const fetchEventNews = async () => {
+    setNewsLoading(true);
+    setNewsError(null);
+    
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/events/${id}/news`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.code === 200) {
+        setNewsTimeline(data.data || []);
+      } else {
+        throw new Error(data.message || '获取相关新闻失败');
+      }
+    } catch (err) {
+      console.error('获取相关新闻失败:', err);
+      setNewsError(err.message || '获取相关新闻失败，请稍后重试');
+      setNewsTimeline([]);
+    } finally {
+      setNewsLoading(false);
+    }
+  };
+
+  // 获取事件统计信息
+  const fetchEventStats = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/events/${id}/stats`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.code === 200) {
+          setEventStats(data.data);
+        }
+      }
+    } catch (err) {
+      console.warn('获取事件统计失败:', err);
+    }
+  };
+
+  // 数据格式转换函数
+  const formatStoryData = (eventData) => {
+    if (!eventData) return null;
+
+    // 解析标签
+    let tags = [];
+    try {
+      if (typeof eventData.tags === 'string' && eventData.tags.trim()) {
+        tags = JSON.parse(eventData.tags);
+      } else if (Array.isArray(eventData.tags)) {
+        tags = eventData.tags;
+      }
+    } catch (e) {
+      console.warn('解析标签失败:', e);
+      tags = [];
+    }
+
+    // 评估重要性
+    const getImportance = (hotnessScore, viewCount) => {
+      if (hotnessScore >= 8 || viewCount >= 1000) return '高';
+      if (hotnessScore >= 5 || viewCount >= 500) return '中';
+      return '低';
+    };
+
+    return {
+      id: eventData.id,
+      title: eventData.title,
+      description: eventData.description,
+      category: eventData.category,
+      status: eventData.status,
+      importance: getImportance(eventData.hotness_score, eventData.view_count),
+      startDate: eventData.start_time,
+      lastUpdate: eventData.updated_at,
+      totalNews: newsTimeline.length, // 从相关新闻数量获取
+      tags: tags,
+      summary: eventData.content || eventData.description,
+      hotnessScore: eventData.hotness_score,
+      viewCount: eventData.view_count,
+      likeCount: eventData.like_count,
+      commentCount: eventData.comment_count,
+      shareCount: eventData.share_count
+    };
+  };
+
+  // 格式化新闻数据
+  const formatNewsData = (newsData) => {
+    return newsData.map(news => {
+      // 评估新闻影响级别
+      const getImpact = (viewCount, likeCount, commentCount) => {
+        const score = (viewCount || 0) + (likeCount || 0) * 2 + (commentCount || 0) * 3;
+        if (score >= 100) return '高';
+        if (score >= 50) return '中';
+        return '低';
+      };
+
+      // 确定新闻类型（基于影响级别）
+      const impact = getImpact(news.view_count, news.like_count, news.comment_count);
+      const type = impact === '高' ? 'major' : 'minor';
+
+      const publishedDate = new Date(news.published_at);
+      
+      return {
+        id: news.id,
+        date: publishedDate.toISOString().split('T')[0],
+        time: publishedDate.toTimeString().slice(0, 5),
+        type: type,
+        title: news.title,
+        summary: news.summary || news.description || (news.content ? news.content.substring(0, 150) + '...' : ''),
+        source: news.source,
+        impact: impact,
+        relatedNews: 1 // 每条新闻本身就是一条相关新闻
+      };
+    });
+  };
 
   useEffect(() => {
-    // 模拟API调用
-    setLoading(true);
-    setTimeout(() => {
-      setStory(mockStoryDetail);
-      setNewsTimeline(mockNewsTimeline);
-      setLoading(false);
-    }, 1000);
-  }, [id, mockStoryDetail, mockNewsTimeline]);
+    if (id) {
+      fetchEventDetail();
+      fetchEventNews();
+      fetchEventStats();
+    }
+  }, [id]);
 
-  // 筛选和排序新闻
-  const filteredAndSortedNews = newsTimeline
+  // 格式化新闻数据并进行筛选和排序
+  const formattedNews = formatNewsData(newsTimeline);
+  
+  const filteredAndSortedNews = formattedNews
     .filter(news => filterType === 'all' || news.type === filterType)
     .sort((a, b) => {
       const dateA = new Date(`${a.date} ${a.time}`);
       const dateB = new Date(`${b.date} ${b.time}`);
       return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
     });
+
+  // 格式化的故事数据
+  const formattedStory = formatStoryData(story);
 
   // 分页逻辑
   const totalPages = Math.ceil(filteredAndSortedNews.length / newsPerPage);
@@ -201,7 +251,34 @@ const StoryDetailPage = () => {
     );
   }
 
-  if (!story) {
+  if (error) {
+    return (
+      <div className="story-detail-container">
+        <Header />
+        <div className="story-detail-content">
+          <div className="error-state">
+            <h2>加载失败</h2>
+            <p>{error}</p>
+            <button 
+              onClick={() => {
+                fetchEventDetail();
+                fetchEventNews();
+                fetchEventStats();
+              }}
+              className="back-btn"
+              style={{ marginRight: '16px' }}
+            >
+              重新加载
+            </button>
+            <Link to="/stories" className="back-btn">返回故事列表</Link>
+          </div>
+        </div>
+        <ThemeToggle />
+      </div>
+    );
+  }
+
+  if (!story || !formattedStory) {
     return (
       <div className="story-detail-container">
         <Header />
@@ -227,45 +304,53 @@ const StoryDetailPage = () => {
           <div className="breadcrumb">
             <Link to="/stories">故事</Link>
             <span className="breadcrumb-separator">›</span>
-            <span className="current-page">{story.title}</span>
+            <span className="current-page">{formattedStory.title}</span>
           </div>
           
           <div className="story-info-card">
             <div className="story-meta-row">
               <div className="story-badges">
-                <span className="story-category">{story.category}</span>
-                <span className={`story-status ${story.status === '进行中' ? 'ongoing' : 'completed'}`}>
-                  {story.status}
+                <span className="story-category">{formattedStory.category}</span>
+                <span className={`story-status ${formattedStory.status === '进行中' ? 'ongoing' : 'completed'}`}>
+                  {formattedStory.status}
                 </span>
-                <span className="story-importance" style={{color: getImpactColor(story.importance)}}>
-                  重要性: {story.importance}
+                <span className="story-importance" style={{color: getImpactColor(formattedStory.importance)}}>
+                  重要性: {formattedStory.importance}
                 </span>
               </div>
               <div className="story-dates">
-                <span className="start-date">开始: {formatDate(story.startDate)}</span>
-                <span className="last-update">更新: {formatDate(story.lastUpdate)}</span>
+                <span className="start-date">开始: {formatDate(formattedStory.startDate)}</span>
+                <span className="last-update">更新: {formatDate(formattedStory.lastUpdate)}</span>
               </div>
             </div>
             
-            <h1 className="story-detail-title">{story.title}</h1>
-            <p className="story-detail-description">{story.description}</p>
+            <h1 className="story-detail-title">{formattedStory.title}</h1>
+            <p className="story-detail-description">{formattedStory.description}</p>
             
             <div className="story-summary">
               <h3>故事概要</h3>
-              <p>{story.summary}</p>
+              <p>{formattedStory.summary}</p>
             </div>
             
             <div className="story-stats-row">
               <div className="stat-item">
-                <span className="stat-number">{story.totalNews}</span>
+                <span className="stat-number">{formattedStory.totalNews}</span>
                 <span className="stat-label">相关新闻</span>
               </div>
               <div className="stat-item">
-                <span className="stat-number">{filteredAndSortedNews.length}</span>
-                <span className="stat-label">时间线事件</span>
+                <span className="stat-number">{formattedStory.viewCount || 0}</span>
+                <span className="stat-label">浏览次数</span>
               </div>
               <div className="stat-item">
-                <span className="stat-number">{story.tags.length}</span>
+                <span className="stat-number">{(formattedStory.hotnessScore || 0).toFixed(1)}</span>
+                <span className="stat-label">热度分数</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">{formattedStory.likeCount || 0}</span>
+                <span className="stat-label">点赞数</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">{formattedStory.tags.length}</span>
                 <span className="stat-label">相关标签</span>
               </div>
             </div>
@@ -273,7 +358,7 @@ const StoryDetailPage = () => {
             <div className="story-tags-section">
               <h4>相关标签</h4>
               <div className="story-tags">
-                {story.tags.map((tag, index) => (
+                {formattedStory.tags.map((tag, index) => (
                   <span key={index} className="story-tag">{tag}</span>
                 ))}
               </div>
@@ -283,7 +368,27 @@ const StoryDetailPage = () => {
 
         {/* 时间线控制 */}
         <div className="timeline-controls">
-          <h2>新闻时间线</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2>新闻时间线</h2>
+            <button 
+              onClick={() => {
+                fetchEventNews();
+                fetchEventStats();
+              }}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+              disabled={newsLoading}
+            >
+              {newsLoading ? '刷新中...' : '🔄 刷新新闻'}
+            </button>
+          </div>
           <div className="controls-row">
             <div className="sort-control">
               <label>排序方式:</label>
@@ -308,59 +413,96 @@ const StoryDetailPage = () => {
                 <option value="minor">一般事件</option>
               </select>
             </div>
+            <div className="news-count-info" style={{ marginLeft: '20px', color: '#6b7280' }}>
+              共找到 {filteredAndSortedNews.length} 条相关新闻
+            </div>
           </div>
         </div>
 
         {/* 新闻时间线 */}
         <div className="news-timeline-container">
-          <div className="timeline-line"></div>
-          
-          {currentNews.map((news, index) => (
-            <div key={news.id} className={`timeline-news-item ${index % 2 === 0 ? 'left' : 'right'}`}>
-              <div className="timeline-news-marker">
-                <span className="news-type-icon">{getNewsTypeIcon(news.type)}</span>
-              </div>
+          {newsLoading && (
+            <div className="news-loading" style={{ textAlign: 'center', padding: '40px' }}>
+              <div style={{ fontSize: '20px', marginBottom: '16px' }}>⏳</div>
+              <p>正在加载相关新闻...</p>
+            </div>
+          )}
+
+          {newsError && (
+            <div className="news-error" style={{ 
+              textAlign: 'center', 
+              padding: '40px', 
+              backgroundColor: '#fee2e2', 
+              borderRadius: '8px', 
+              margin: '20px 0' 
+            }}>
+              <div style={{ fontSize: '20px', marginBottom: '16px' }}>❌</div>
+              <p style={{ color: '#dc2626' }}>{newsError}</p>
+              <button 
+                onClick={fetchEventNews}
+                style={{
+                  marginTop: '16px',
+                  padding: '8px 16px',
+                  backgroundColor: '#dc2626',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                重新加载新闻
+              </button>
+            </div>
+          )}
+
+          {!newsLoading && !newsError && (
+            <>
+              <div className="timeline-line"></div>
               
-              <div className="news-card">
-                <div className="news-header">
-                  <div className="news-meta">
-                    <span className="news-date">{formatDate(news.date)}</span>
-                    <span className="news-time">{news.time}</span>
-                    <span className={`news-type ${news.type}`}>
-                      {news.type === 'major' ? '重大事件' : '一般事件'}
-                    </span>
+              {currentNews.map((news, index) => (
+                <div key={news.id} className="timeline-news-item">
+                  <div className="timeline-news-marker">
+                    <span className="news-type-icon">{getNewsTypeIcon(news.type)}</span>
                   </div>
-                  <div className="news-impact" style={{color: getImpactColor(news.impact)}}>
-                    影响: {news.impact}
-                  </div>
-                </div>
-                
-                <h3 className="news-title">
-                  <Link to={`/newspage/${news.id}`}>{news.title}</Link>
-                </h3>
-                
-                <p className="news-summary">{news.summary}</p>
-                
-                <div className="news-footer">
-                  <div className="news-source">
-                    <span>来源: {news.source}</span>
-                  </div>
-                  <div className="news-related">
-                    <span>{news.relatedNews} 条相关新闻</span>
-                  </div>
-                </div>
-                
-                <div className="news-actions">
-                  <Link to={`/newspage/${news.id}`} className="read-news-btn">
-                    阅读详情 →
+                  
+                  <Link to={`/newspage/${news.id}`} className="news-card-link">
+                    <div className="news-card">
+                      <div className="news-header">
+                        <div className="news-meta">
+                          <span className="news-date">{formatDate(news.date)}</span>
+                          <span className="news-time">{news.time}</span>
+                          <span className={`news-type ${news.type}`}>
+                            {news.type === 'major' ? '重大事件' : '一般事件'}
+                          </span>
+                        </div>
+                        <div className="news-impact" style={{color: getImpactColor(news.impact)}}>
+                          影响: {news.impact}
+                        </div>
+                      </div>
+                      
+                      <h3 className="news-title">
+                        {news.title}
+                      </h3>
+                      
+                      <p className="news-summary">{news.summary}</p>
+                      
+                      <div className="news-footer">
+                        <div className="news-source">
+                          <span>来源: {news.source}</span>
+                        </div>
+                        <div className="news-related">
+                          <span>{news.relatedNews} 条相关新闻</span>
+                        </div>
+                      </div>
+                    </div>
                   </Link>
                 </div>
-              </div>
-            </div>
-          ))}
+              ))}
+            </>
+          )}
         </div>
 
-        {filteredAndSortedNews.length === 0 && (
+        {!newsLoading && !newsError && filteredAndSortedNews.length === 0 && (
           <div className="no-news-results">
             <h3>暂无符合条件的新闻</h3>
             <p>请尝试调整筛选条件</p>
@@ -368,7 +510,7 @@ const StoryDetailPage = () => {
         )}
 
         {/* 分页组件 */}
-        {totalPages > 1 && (
+        {!newsLoading && !newsError && totalPages > 1 && (
           <div className="pagination-container">
             <div className="pagination-info">
               <span>共 {filteredAndSortedNews.length} 条新闻，第 {currentPage} / {totalPages} 页</span>

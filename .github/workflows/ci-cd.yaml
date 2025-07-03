@@ -11,9 +11,9 @@ on:
 # 定义一个或多个作业 (job)
 jobs:
   # 作业的唯一 ID
-  build-and-deploy:
+  lint-check:
     # 作业的名称（显示在 GitHub UI 上）
-    name: Build and Deploy
+    name: Lint Check
     # 作业运行的虚拟机环境
     runs-on: ubuntu-latest
 
@@ -37,20 +37,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 第四步：运行测试
-      - name: Run tests
-        run: npm test
-
-      # 第五步：构建项目
-      # 这个命令会生成 build 目录
-      - name: Build project
-        run: npm run build
-
-      # 第六步：部署到 GitHub Pages
-      # 仅当代码推送到 main 分支时才执行此步骤
-      # - name: Deploy to GitHub Pages
-      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      #   uses: peaceiris/actions-gh-pages@v3
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub 自动提供的 token
-      #     publish_dir: ./build                      # 指定要发布的目录（即我们的构建产物）
+      # 第四步：运行 ESLint
+      - name: Run ESLint
+        run: npm run lint

@@ -3,7 +3,6 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Login from '../pages/user/Login';
 import Register from '../pages/user/Register';
 import ProtectedRoute from '../components/ProtectedRoute';
-import AdminProtectedRoute from '../components/admin/AdminProtectedRoute';
 
 import HomePage from '../pages/HomePage';
 import NewsPage from '../pages/newspage';
@@ -83,41 +82,41 @@ const router = createBrowserRouter([
   {
     path: '/admin',
     element: (
-      <AdminProtectedRoute>
+      <ProtectedRoute isAdmin={true}>
         <AdminDashboard />
-      </AdminProtectedRoute>
+      </ProtectedRoute>
     )
   },
   {
     path: '/admin/users',
     element: (
-      <AdminProtectedRoute>
+      <ProtectedRoute isAdmin={true}>
         <UserManagement />
-      </AdminProtectedRoute>
+      </ProtectedRoute>
     )
   },
   {
     path: '/admin/events',
     element: (
-      <AdminProtectedRoute>
+      <ProtectedRoute isAdmin={true}>
         <AdminDashboard />
-      </AdminProtectedRoute>
+      </ProtectedRoute>
     )
   },
   {
     path: '/admin/news',
     element: (
-      <AdminProtectedRoute>
+      <ProtectedRoute isAdmin={true}>
         <AdminDashboard />
-      </AdminProtectedRoute>
+      </ProtectedRoute>
     )
   },
   {
     path: '/admin/rss-sources',
     element: (
-      <AdminProtectedRoute>
+      <ProtectedRoute isAdmin={true}>
         <RSSManagement />
-      </AdminProtectedRoute>
+      </ProtectedRoute>
     )
   }
 ]);
